@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+    <RootNamespace>DocFlow.Blazor.WebApp.Tiered.Client</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.8.1" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.8.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.AspNetCore.Components.WebAssembly.LeptonXLiteTheme" Version="4.1.0-preview*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Autofac.WebAssembly" Version="9.3.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Volo.Abp.Identity.Blazor.WebAssembly" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Blazor.WebAssembly" Version="9.3.6" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Blazor.WebAssembly" Version="9.3.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DocFlow.HttpApi.Client\DocFlow.HttpApi.Client.csproj" />
+  </ItemGroup>
+
+
+</Project>
