@@ -90,6 +90,20 @@
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
 
+-- Constitution-driven mandatory requirements (add to above as applicable):
+
+- **SEC-001**: All APIs MUST enforce OIDC authentication and validate tenant context for
+  tenant-scoped operations.
+- **SEC-002**: Secrets and credentials MUST not be committed to source control and MUST use
+  environment/secret-management solutions in deployment.
+- **OBS-001**: Services touching tenant data MUST emit structured logs, metrics, and traces.
+- **AUD-001**: Sensitive operations MUST produce auditable logs with enough context for
+  forensic investigation (user, tenant, timestamp, operation, outcome).
+- **PIPE-001**: CI/CD pipelines MUST be idempotent and retry-safe; build artifacts MUST be
+  reproducible.
+- **FF-001**: New features that change runtime behavior MUST be behind feature flags and have
+  a rollback strategy.
+
 *Example of marking unclear requirements:*
 
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]

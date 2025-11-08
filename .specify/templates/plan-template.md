@@ -31,6 +31,15 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
+Required gates (derived from project constitution):
+
+- Security: API authentication via OIDC and tenant-context validation present in design.
+- Isolation: Design demonstrates tenant isolation and least-privilege access for data.
+- Observability: Plans include structured logging, metrics, and tracing for core flows.
+- Determinism: Pipelines and rule-based classifiers described for idempotency and retry-safety.
+- Feature flags: Any new behavior MUST include a feature-flag rollout plan.
+- Testing: Automated tests (unit + integration/contract where applicable) required before merge.
+
 [Gates determined based on constitution file]
 
 ## Project Structure

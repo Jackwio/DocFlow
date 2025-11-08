@@ -68,6 +68,11 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T007 Create base models/entities that all stories depend on
 - [ ] T008 Configure error handling and logging infrastructure
 - [ ] T009 Setup environment configuration management
+ - [ ] T009a Ensure OIDC token validation and tenant-context middleware is implemented and covered by tests
+ - [ ] T009b Implement observability foundations: structured logging, metrics, and distributed tracing configuration
+ - [ ] T009c Implement audit logging mechanism for sensitive tenant operations (tamper-evident storage where required)
+ - [ ] T009d Configure feature flagging system and rollout strategy; include default-off flags for risky features
+ - [ ] T009e Ensure CI pipelines are idempotent and produce reproducible artifacts; document retry behavior
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
