@@ -20,10 +20,10 @@
 
 **Purpose**: Initialize project structure, dependencies, and development environment.
 
-- [ ] [T001] [P] Create feature branch `feat/document-intake-classification` from `production`
-- [ ] [T002] [P] Install UglyToad.PdfPig 0.1.8+ NuGet package (src/DocFlow.Domain/DocFlow.Domain.csproj)
-- [ ] [T003] [P] Install FluentValidation 11+ NuGet package (src/DocFlow.Application.Contracts/DocFlow.Application.Contracts.csproj)
-- [ ] [T004] [P] Install Polly 8+ NuGet package (src/DocFlow.Application/DocFlow.Application.csproj)
+- [x] [T001] [P] Create feature branch `feat/document-intake-classification` from `production`
+- [x] [T002] [P] Install UglyToad.PdfPig 0.1.8+ NuGet package (src/DocFlow.Domain/DocFlow.Domain.csproj)
+- [x] [T003] [P] Install FluentValidation 11+ NuGet package (src/DocFlow.Application.Contracts/DocFlow.Application.Contracts.csproj)
+- [x] [T004] [P] Install Polly 8+ NuGet package (src/DocFlow.Application/DocFlow.Application.csproj)
 - [ ] [T005] [P] Configure Redis connection string in appsettings.json (src/DocFlow.HttpApi.Host/appsettings.json)
 - [ ] [T006] [P] Configure Hangfire with ABP Background Jobs (src/DocFlow.HttpApi.Host/DocFlowHttpApiHostModule.cs)
 - [ ] [T007] [P] Create Docker Compose file for PostgreSQL 16 + Redis 7 (docker-compose.yml)
@@ -37,17 +37,17 @@
 
 **Purpose**: Create foundational value objects with business validation logic used by all aggregates.
 
-- [ ] [T011] [P] Create FileName value object with validation (src/DocFlow.Domain/Documents/FileName.cs)
-- [ ] [T012] [P] Create FileSize value object with range validation (src/DocFlow.Domain/Documents/FileSize.cs)
-- [ ] [T013] [P] Create MimeType value object with whitelist validation (src/DocFlow.Domain/Documents/MimeType.cs)
-- [ ] [T014] [P] Create BlobReference value object (src/DocFlow.Domain/Documents/BlobReference.cs)
-- [ ] [T015] [P] Create TagName value object (src/DocFlow.Domain/Documents/TagName.cs)
-- [ ] [T016] [P] Create ConfidenceScore value object (src/DocFlow.Domain/Documents/ConfidenceScore.cs)
-- [ ] [T017] [P] Create ErrorMessage value object (src/DocFlow.Domain/Shared/ErrorMessage.cs)
-- [ ] [T018] [P] Create DocumentStatus enum (Pending/Classified/Routed/Failed) (src/DocFlow.Domain.Shared/Enums/DocumentStatus.cs)
-- [ ] [T019] [P] Create TagSource enum (Automatic/Manual) (src/DocFlow.Domain.Shared/Enums/TagSource.cs)
-- [ ] [T020] [P] Create RuleConditionType enum (FileNameRegex/MimeType/FileSize/TextContent) (src/DocFlow.Domain.Shared/Enums/RuleConditionType.cs)
-- [ ] [T021] [P] Create QueueType enum (Folder/Webhook) (src/DocFlow.Domain.Shared/Enums/QueueType.cs)
+- [x] [T011] [P] Create FileName value object with validation (src/DocFlow.Domain/Documents/FileName.cs)
+- [x] [T012] [P] Create FileSize value object with range validation (src/DocFlow.Domain/Documents/FileSize.cs)
+- [x] [T013] [P] Create MimeType value object with whitelist validation (src/DocFlow.Domain/Documents/MimeType.cs)
+- [x] [T014] [P] Create BlobReference value object (src/DocFlow.Domain/Documents/BlobReference.cs)
+- [x] [T015] [P] Create TagName value object (src/DocFlow.Domain/Documents/TagName.cs)
+- [x] [T016] [P] Create ConfidenceScore value object (src/DocFlow.Domain/Documents/ConfidenceScore.cs)
+- [x] [T017] [P] Create ErrorMessage value object (src/DocFlow.Domain/Shared/ErrorMessage.cs)
+- [x] [T018] [P] Create DocumentStatus enum (Pending/Classified/Routed/Failed) (src/DocFlow.Domain.Shared/Enums/DocumentStatus.cs)
+- [x] [T019] [P] Create TagSource enum (Automatic/Manual) (src/DocFlow.Domain.Shared/Enums/TagSource.cs)
+- [x] [T020] [P] Create RuleConditionType enum (FileNameRegex/MimeType/FileSize/TextContent) (src/DocFlow.Domain.Shared/Enums/RuleConditionType.cs)
+- [x] [T021] [P] Create QueueType enum (Folder/Webhook) (src/DocFlow.Domain.Shared/Enums/QueueType.cs)
 
 ---
 
@@ -55,26 +55,26 @@
 
 **Purpose**: Implement Document aggregate root with all business methods.
 
-- [ ] [T022] Create Tag entity with Name and Source properties (src/DocFlow.Domain/Documents/Tag.cs)
-- [ ] [T023] Create ClassificationHistoryEntry entity with RuleId, TagName, MatchedCondition (src/DocFlow.Domain/Documents/ClassificationHistoryEntry.cs)
-- [ ] [T024] [US1] Create Document aggregate root with RegisterUpload factory method using Guid Id (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T025] [US2] Add Status property with private setter to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T026] [US2] Add ApplyClassificationResult method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T027] [US2] Add MarkAsRouted method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T028] [US3] Add RecordClassificationFailure method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T029] [US3] Add RetryClassification method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T030] [US10] Add AddManualTag method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T031] [US10] Add RemoveManualTag method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T032] [US1] Create DocumentUploadedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentUploadedEvent.cs)
-- [ ] [T033] [US2] Create DocumentClassifiedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentClassifiedEvent.cs)
-- [ ] [T034] [US2] Create DocumentRoutedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentRoutedEvent.cs)
-- [ ] [T035] [US3] Create DocumentClassificationFailedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentClassificationFailedEvent.cs)
-- [ ] [T036] [US3] Create DocumentRetryInitiatedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentRetryInitiatedEvent.cs)
-- [ ] [T037] [US10] Create ManualTagAddedEvent domain event (src/DocFlow.Domain/Documents/Events/ManualTagAddedEvent.cs)
-- [ ] [T038] [US10] Create ManualTagRemovedEvent domain event (src/DocFlow.Domain/Documents/Events/ManualTagRemovedEvent.cs)
-- [ ] [T039] Create IDocumentRepository interface (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
-- [ ] [T040] [US4] Add FindByStatusAsync method to IDocumentRepository (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
-- [ ] [T041] [US4] Add SearchAsync method with filtering to IDocumentRepository (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
+- [x] [T022] Create Tag entity with Name and Source properties (src/DocFlow.Domain/Documents/Tag.cs)
+- [x] [T023] Create ClassificationHistoryEntry entity with RuleId, TagName, MatchedCondition (src/DocFlow.Domain/Documents/ClassificationHistoryEntry.cs)
+- [x] [T024] [US1] Create Document aggregate root with RegisterUpload factory method using Guid Id (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T025] [US2] Add Status property with private setter to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T026] [US2] Add ApplyClassificationResult method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T027] [US2] Add MarkAsRouted method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T028] [US3] Add RecordClassificationFailure method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T029] [US3] Add RetryClassification method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T030] [US10] Add AddManualTag method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T031] [US10] Add RemoveManualTag method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T032] [US1] Create DocumentUploadedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentUploadedEvent.cs)
+- [x] [T033] [US2] Create DocumentClassifiedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentClassifiedEvent.cs)
+- [x] [T034] [US2] Create DocumentRoutedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentRoutedEvent.cs)
+- [x] [T035] [US3] Create DocumentClassificationFailedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentClassificationFailedEvent.cs)
+- [x] [T036] [US3] Create DocumentRetryInitiatedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentRetryInitiatedEvent.cs)
+- [x] [T037] [US10] Create ManualTagAddedEvent domain event (src/DocFlow.Domain/Documents/Events/ManualTagAddedEvent.cs)
+- [x] [T038] [US10] Create ManualTagRemovedEvent domain event (src/DocFlow.Domain/Documents/Events/ManualTagRemovedEvent.cs)
+- [x] [T039] Create IDocumentRepository interface (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
+- [x] [T040] [US4] Add FindByStatusAsync method to IDocumentRepository (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
+- [x] [T041] [US4] Add SearchAsync method with filtering to IDocumentRepository (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
 
 ---
 
@@ -82,22 +82,22 @@
 
 **Purpose**: Implement classification rule aggregate with condition matching logic.
 
-- [ ] [T042] Create RuleCondition value object with Type, Pattern, MatchValue (src/DocFlow.Domain/ClassificationRules/RuleCondition.cs)
-- [ ] [T043] Create RulePriority value object (src/DocFlow.Domain/ClassificationRules/RulePriority.cs)
-- [ ] [T044] [US5] Create ClassificationRule aggregate root with DefineRule factory method using Guid Id (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T045] [US5] Add ApplyTags list property to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T046] [US5] Add Conditions list property to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T047] [US5] Add UpdateConditions method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T048] [US5] Add UpdateTags method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T049] [US7] Add UpdatePriority method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T050] [US8] Add Activate/Deactivate methods to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T051] [US5] Add MatchesAsync method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T052] [US5] Create ClassificationRuleCreatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleCreatedEvent.cs)
-- [ ] [T053] [US5] Create ClassificationRuleUpdatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleUpdatedEvent.cs)
-- [ ] [T054] [US8] Create ClassificationRuleActivatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleActivatedEvent.cs)
-- [ ] [T055] [US8] Create ClassificationRuleDeactivatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleDeactivatedEvent.cs)
-- [ ] [T056] Create IClassificationRuleRepository interface (src/DocFlow.Domain/ClassificationRules/IClassificationRuleRepository.cs)
-- [ ] [T057] [US5] Add GetActiveRulesAsync method to IClassificationRuleRepository (src/DocFlow.Domain/ClassificationRules/IClassificationRuleRepository.cs)
+- [x] [T042] Create RuleCondition value object with Type, Pattern, MatchValue (src/DocFlow.Domain/ClassificationRules/RuleCondition.cs)
+- [x] [T043] Create RulePriority value object (src/DocFlow.Domain/ClassificationRules/RulePriority.cs)
+- [x] [T044] [US5] Create ClassificationRule aggregate root with DefineRule factory method using Guid Id (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T045] [US5] Add ApplyTags list property to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T046] [US5] Add Conditions list property to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T047] [US5] Add UpdateConditions method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T048] [US5] Add UpdateTags method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T049] [US7] Add UpdatePriority method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T050] [US8] Add Activate/Deactivate methods to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T051] [US5] Add MatchesAsync method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T052] [US5] Create ClassificationRuleCreatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleCreatedEvent.cs)
+- [x] [T053] [US5] Create ClassificationRuleUpdatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleUpdatedEvent.cs)
+- [x] [T054] [US8] Create ClassificationRuleActivatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleActivatedEvent.cs)
+- [x] [T055] [US8] Create ClassificationRuleDeactivatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleDeactivatedEvent.cs)
+- [x] [T056] Create IClassificationRuleRepository interface (src/DocFlow.Domain/ClassificationRules/IClassificationRuleRepository.cs)
+- [x] [T057] [US5] Add GetActiveRulesAsync method to IClassificationRuleRepository (src/DocFlow.Domain/ClassificationRules/IClassificationRuleRepository.cs)
 
 ---
 
