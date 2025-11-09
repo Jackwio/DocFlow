@@ -122,13 +122,13 @@
 
 **Purpose**: Implement domain services for classification and routing logic.
 
-- [ ] [T068] [US5] Create ClassificationRuleManager domain service (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
-- [ ] [T069] [US5] Add EvaluateRulesAsync method to ClassificationRuleManager (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
-- [ ] [T070] [US6] Add EvaluateRuleInDryRunModeAsync method to ClassificationRuleManager (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
-- [ ] [T071] [US1] Create PdfTextExtractionManager domain service using PdfPig (src/DocFlow.Domain/Documents/PdfTextExtractionManager.cs)
-- [ ] [T072] [US1] Add ExtractTextAsync method to PdfTextExtractionManager (src/DocFlow.Domain/Documents/PdfTextExtractionManager.cs)
-- [ ] [T073] [US9] Create RoutingManager domain service (src/DocFlow.Domain/RoutingQueues/RoutingManager.cs)
-- [ ] [T074] [US9] Add RouteDocumentToQueueAsync method to RoutingManager (src/DocFlow.Domain/RoutingQueues/RoutingManager.cs)
+- [x] [T068] [US5] Create ClassificationRuleManager domain service (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
+- [x] [T069] [US5] Add EvaluateRulesAsync method to ClassificationRuleManager (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
+- [x] [T070] [US6] Add EvaluateRuleInDryRunModeAsync method to ClassificationRuleManager (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
+- [x] [T071] [US1] Create PdfTextExtractionManager domain service using PdfPig (src/DocFlow.Domain/Documents/PdfTextExtractionManager.cs)
+- [x] [T072] [US1] Add ExtractTextAsync method to PdfTextExtractionManager (src/DocFlow.Domain/Documents/PdfTextExtractionManager.cs)
+- [x] [T073] [US9] Create RoutingManager domain service (src/DocFlow.Domain/RoutingQueues/RoutingManager.cs)
+- [x] [T074] [US9] Add RouteDocumentToQueueAsync method to RoutingManager (src/DocFlow.Domain/RoutingQueues/RoutingManager.cs)
 
 ---
 
