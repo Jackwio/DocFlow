@@ -1,0 +1,549 @@
+openapi: 3.0.3
+info:
+  title: DocFlow Search API
+  description: Advanced document search and filtering API
+  version: 1.0.0
+  contact:
+    name: DocFlow Team
+
+servers:
+  - url: https://api.docflow.example.com/api
+    description: Production server
+  - url: http://localhost:44300/api
+    description: Local development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /documents/search:
+    get:
+      summary: Advanced document search
+      description: |
+        Search documents using multiple criteria with AND/OR logic support.
+        All filter parameters use AND logic (must match all specified criteria).
+        Tag filtering uses OR logic (match any of the specified tags) unless matchAllTags=true.
+      operationId: searchDocuments
+      tags:
+        - Search
+      parameters:
+        # Text Search
+        - name: query
+          in: query
+          schema:
+            type: string
+          description: Full-text search query (searches filename and extracted text)
+          example: "invoice"
+        
+        # Status Filters
+        - name: statuses
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [Pending, Classified, Routed, Failed]
+          style: form
+          explode: true
+          description: Filter by document statuses (OR logic - match any status)
+          example: ["Classified", "Routed"]
+        
+        # Tag Filters
+        - name: tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by tags (OR logic by default, AND if matchAllTags=true)
+          example: ["Invoice", "Urgent"]
+        
+        - name: matchAllTags
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: If true, document must have all specified tags (AND logic)
+          example: false
+        
+        # Inbox Filter
+        - name: inboxIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
+          description: Filter by inbox IDs (OR logic - match any inbox)
+          example: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"]
+        
+        # Queue Filter
+        - name: queueIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
+          description: Filter by routing queue IDs (OR logic - match any queue)
+        
+        # Date Range Filters
+        - name: uploadedAfter
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter documents uploaded after this date/time
+          example: "2024-01-01T00:00:00Z"
+        
+        - name: uploadedBefore
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter documents uploaded before this date/time
+          example: "2024-01-31T23:59:59Z"
+        
+        - name: classifiedAfter
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter documents classified after this date/time
+        
+        - name: classifiedBefore
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter documents classified before this date/time
+        
+        # File Size Filters
+        - name: minSizeBytes
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: Minimum file size in bytes
+          example: 102400
+        
+        - name: maxSizeBytes
+          in: query
+          schema:
+            type: integer
+            format: int64
+            minimum: 0
+          description: Maximum file size in bytes
+          example: 10485760
+        
+        # MIME Type Filter
+        - name: mimeTypes
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: ["application/pdf", "image/png", "image/jpeg", "image/tiff"]
+          style: form
+          explode: true
+          description: Filter by MIME types (OR logic - match any type)
+          example: ["application/pdf"]
+        
+        # Filename Search
+        - name: fileName
+          in: query
+          schema:
+            type: string
+          description: Search by filename (partial match, case-insensitive)
+          example: "invoice"
+        
+        # Classification Confidence Filter
+        - name: minConfidence
+          in: query
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 1
+          description: Minimum classification confidence score (0-1)
+          example: 0.8
+        
+        # Uploader Filter
+        - name: uploaderIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+          style: form
+          explode: true
+          description: Filter by uploader user IDs (OR logic)
+        
+        # Pagination
+        - $ref: '#/components/parameters/SkipCount'
+        - $ref: '#/components/parameters/MaxResultCount'
+        - $ref: '#/components/parameters/Sorting'
+      
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResultDto_DocumentSearchResultDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /documents/search/suggestions:
+    get:
+      summary: Get search suggestions
+      description: Get autocomplete suggestions for document search (filename and tag suggestions)
+      operationId: getSearchSuggestions
+      tags:
+        - Search
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 2
+          description: Partial search query (minimum 2 characters)
+          example: "inv"
+        
+        - name: suggestionType
+          in: query
+          schema:
+            type: string
+            enum: [filename, tag, all]
+            default: all
+          description: Type of suggestions to return
+        
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 10
+          description: Maximum number of suggestions to return
+      
+      responses:
+        '200':
+          description: Search suggestions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchSuggestionsDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /documents/search/facets:
+    get:
+      summary: Get search facets
+      description: Get facet counts for common filter dimensions (useful for building filter UI)
+      operationId: getSearchFacets
+      tags:
+        - Search
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+          description: Optional search query to scope facets
+      
+      responses:
+        '200':
+          description: Search facets with counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchFacetsDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from authentication endpoint
+
+  parameters:
+    SkipCount:
+      name: skipCount
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Number of items to skip (for pagination)
+    
+    MaxResultCount:
+      name: maxResultCount
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Maximum number of items to return
+    
+    Sorting:
+      name: sorting
+      in: query
+      schema:
+        type: string
+        example: "createdTime desc"
+      description: |
+        Sorting criteria (format: "field asc|desc")
+        Supported fields: fileName, fileSize, status, createdTime, classificationConfidence
+
+  schemas:
+    DocumentSearchResultDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+          example: "invoice_2024_001.pdf"
+        fileSizeHumanReadable:
+          type: string
+          example: "2.50 MB"
+        mimeType:
+          type: string
+          example: "application/pdf"
+        status:
+          type: string
+          enum: [Pending, Classified, Routed, Failed]
+          example: "Classified"
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["Invoice", "Accounting"]
+        inboxId:
+          type: string
+          format: uuid
+        inboxName:
+          type: string
+          description: Denormalized for convenience
+          example: "Accounting Inbox"
+        routingQueueId:
+          type: string
+          format: uuid
+          nullable: true
+        routingQueueName:
+          type: string
+          nullable: true
+          description: Denormalized for convenience
+          example: "Accounting Queue"
+        classificationConfidence:
+          type: number
+          format: float
+          nullable: true
+          minimum: 0
+          maximum: 1
+          example: 0.95
+        uploadedBy:
+          type: string
+          format: uuid
+          description: User ID of uploader
+        createdTime:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        lastModifiedTime:
+          type: string
+          format: date-time
+        relevanceScore:
+          type: number
+          format: float
+          nullable: true
+          description: Search relevance score (only present for text searches)
+          example: 0.87
+
+    PagedResultDto_DocumentSearchResultDto:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          description: Total number of documents matching search criteria
+          example: 347
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentSearchResultDto'
+
+    SearchSuggestionsDto:
+      type: object
+      properties:
+        fileNameSuggestions:
+          type: array
+          description: Suggested filenames matching the query
+          items:
+            type: string
+          example: ["invoice_2024_001.pdf", "invoice_2024_002.pdf", "invoice_summary.pdf"]
+        tagSuggestions:
+          type: array
+          description: Suggested tags matching the query
+          items:
+            type: string
+          example: ["Invoice", "Inventory"]
+
+    SearchFacetsDto:
+      type: object
+      properties:
+        statusFacets:
+          type: array
+          description: Document counts by status
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [Pending, Classified, Routed, Failed]
+              count:
+                type: integer
+          example:
+            - status: "Classified"
+              count: 1250
+            - status: "Routed"
+              count: 980
+            - status: "Pending"
+              count: 45
+            - status: "Failed"
+              count: 12
+        
+        tagFacets:
+          type: array
+          description: Document counts by tag (top 20)
+          items:
+            type: object
+            properties:
+              tag:
+                type: string
+              count:
+                type: integer
+          example:
+            - tag: "Invoice"
+              count: 650
+            - tag: "Contract"
+              count: 320
+            - tag: "Receipt"
+              count: 280
+        
+        inboxFacets:
+          type: array
+          description: Document counts by inbox
+          items:
+            type: object
+            properties:
+              inboxId:
+                type: string
+                format: uuid
+              inboxName:
+                type: string
+              count:
+                type: integer
+          example:
+            - inboxId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              inboxName: "Accounting Inbox"
+              count: 850
+            - inboxId: "5fb96f85-6828-5673-c4gd-3d074g77bgb7"
+              inboxName: "Legal Inbox"
+              count: 437
+        
+        queueFacets:
+          type: array
+          description: Document counts by routing queue
+          items:
+            type: object
+            properties:
+              queueId:
+                type: string
+                format: uuid
+              queueName:
+                type: string
+              count:
+                type: integer
+        
+        mimeTypeFacets:
+          type: array
+          description: Document counts by MIME type
+          items:
+            type: object
+            properties:
+              mimeType:
+                type: string
+              count:
+                type: integer
+          example:
+            - mimeType: "application/pdf"
+              count: 1850
+            - mimeType: "image/jpeg"
+              count: 320
+            - mimeType: "image/png"
+              count: 117
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "DocFlow.Search.InvalidQuery"
+            message:
+              type: string
+              example: "Search query is too short (minimum 2 characters)"
+            details:
+              type: string
+              nullable: true
+            validationErrors:
+              type: array
+              nullable: true
+              items:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  members:
+                    type: array
+                    items:
+                      type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+tags:
+  - name: Search
+    description: Advanced document search, filtering, and faceting operations

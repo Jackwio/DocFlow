@@ -1,0 +1,594 @@
+openapi: 3.0.3
+info:
+  title: DocFlow Routing Queues API
+  description: API for managing routing queues (folders and webhooks) for classified documents
+  version: 1.0.0
+  contact:
+    name: DocFlow Team
+
+servers:
+  - url: https://api.docflow.example.com/api
+    description: Production server
+  - url: http://localhost:44300/api
+    description: Local development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /queues:
+    get:
+      summary: List routing queues
+      description: Retrieve a paginated list of routing queues
+      operationId: getQueues
+      tags:
+        - Routing Queues
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [Folder, Webhook]
+          description: Filter by queue type
+        - name: isActive
+          in: query
+          schema:
+            type: boolean
+          description: Filter by active/inactive status
+        - $ref: '#/components/parameters/SkipCount'
+        - $ref: '#/components/parameters/MaxResultCount'
+        - $ref: '#/components/parameters/Sorting'
+      responses:
+        '200':
+          description: List of routing queues
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResultDto_RoutingQueueListDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Create a routing queue
+      description: Create a new routing queue (folder-based or webhook-based)
+      operationId: createQueue
+      tags:
+        - Routing Queues
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoutingQueueDto'
+      responses:
+        '200':
+          description: Queue created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingQueueDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /queues/{id}:
+    get:
+      summary: Get queue details
+      description: Retrieve full details for a specific routing queue
+      operationId: getQueue
+      tags:
+        - Routing Queues
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Queue ID
+      responses:
+        '200':
+          description: Queue details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingQueueDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update a routing queue
+      description: Update an existing routing queue's configuration
+      operationId: updateQueue
+      tags:
+        - Routing Queues
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Queue ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoutingQueueDto'
+      responses:
+        '200':
+          description: Queue updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingQueueDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Delete a routing queue
+      description: Permanently delete a routing queue
+      operationId: deleteQueue
+      tags:
+        - Routing Queues
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Queue ID
+      responses:
+        '204':
+          description: Queue deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /queues/{id}/enable:
+    put:
+      summary: Enable a routing queue
+      description: Activate a disabled routing queue
+      operationId: enableQueue
+      tags:
+        - Routing Queues
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Queue ID
+      responses:
+        '200':
+          description: Queue enabled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingQueueDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /queues/{id}/disable:
+    put:
+      summary: Disable a routing queue
+      description: Deactivate a routing queue (documents will not be routed to it)
+      operationId: disableQueue
+      tags:
+        - Routing Queues
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Queue ID
+      responses:
+        '200':
+          description: Queue disabled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingQueueDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /queues/{id}/documents:
+    get:
+      summary: Get documents in queue
+      description: Retrieve documents that have been routed to this queue
+      operationId: getQueueDocuments
+      tags:
+        - Routing Queues
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Queue ID
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Classified, Routed, Failed]
+          description: Filter by document status
+        - $ref: '#/components/parameters/SkipCount'
+        - $ref: '#/components/parameters/MaxResultCount'
+        - $ref: '#/components/parameters/Sorting'
+      responses:
+        '200':
+          description: List of documents in queue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResultDto_DocumentListDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from authentication endpoint
+
+  parameters:
+    SkipCount:
+      name: skipCount
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Number of items to skip (for pagination)
+    
+    MaxResultCount:
+      name: maxResultCount
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Maximum number of items to return
+    
+    Sorting:
+      name: sorting
+      in: query
+      schema:
+        type: string
+        example: "createdTime desc"
+      description: Sorting criteria (format "field asc|desc")
+
+  schemas:
+    RoutingQueueDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        name:
+          type: string
+          example: "Accounting Inbox"
+        description:
+          type: string
+          example: "Routing queue for accounting-related documents"
+        type:
+          type: string
+          enum: [Folder, Webhook]
+          example: "Webhook"
+        isActive:
+          type: boolean
+          example: true
+        folderPath:
+          type: string
+          nullable: true
+          description: File system path (only for Folder type)
+          example: "/shared/accounting/incoming"
+        webhookConfiguration:
+          $ref: '#/components/schemas/WebhookConfigurationDto'
+        documentsRouted:
+          type: integer
+          description: Total number of documents routed to this queue
+          example: 1250
+        lastRoutedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-01-15T16:45:00Z"
+        createdTime:
+          type: string
+          format: date-time
+        lastModifiedTime:
+          type: string
+          format: date-time
+
+    RoutingQueueListDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+          enum: [Folder, Webhook]
+        isActive:
+          type: boolean
+        documentsRouted:
+          type: integer
+        createdTime:
+          type: string
+          format: date-time
+
+    WebhookConfigurationDto:
+      type: object
+      nullable: true
+      description: Webhook configuration (only for Webhook type)
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Webhook endpoint URL (must be HTTPS)
+          example: "https://external-system.example.com/api/webhooks/documents"
+        method:
+          type: string
+          enum: [POST, PUT]
+          default: POST
+          example: "POST"
+        authType:
+          type: string
+          enum: [None, BearerToken, BasicAuth, ApiKey]
+          example: "BearerToken"
+        timeoutSeconds:
+          type: integer
+          minimum: 5
+          maximum: 120
+          default: 30
+          example: 30
+
+    CreateRoutingQueueDto:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Accounting Inbox"
+        description:
+          type: string
+          maxLength: 500
+          example: "Routing queue for accounting-related documents"
+        type:
+          type: string
+          enum: [Folder, Webhook]
+          example: "Webhook"
+        folderPath:
+          type: string
+          nullable: true
+          description: Required if type=Folder
+          example: "/shared/accounting/incoming"
+        webhookConfiguration:
+          $ref: '#/components/schemas/CreateWebhookConfigurationDto'
+
+    UpdateRoutingQueueDto:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        folderPath:
+          type: string
+          nullable: true
+          description: For Folder type queues
+        webhookConfiguration:
+          $ref: '#/components/schemas/UpdateWebhookConfigurationDto'
+
+    CreateWebhookConfigurationDto:
+      type: object
+      nullable: true
+      description: Required if type=Webhook
+      required:
+        - url
+        - authType
+      properties:
+        url:
+          type: string
+          format: uri
+          pattern: '^https://'
+          description: Must be HTTPS URL
+          example: "https://external-system.example.com/api/webhooks/documents"
+        method:
+          type: string
+          enum: [POST, PUT]
+          default: POST
+        authType:
+          type: string
+          enum: [None, BearerToken, BasicAuth, ApiKey]
+        credential:
+          type: string
+          nullable: true
+          description: Required if authType is not None (will be encrypted at rest)
+          example: "sk_live_abc123xyz789"
+        timeoutSeconds:
+          type: integer
+          minimum: 5
+          maximum: 120
+          default: 30
+
+    UpdateWebhookConfigurationDto:
+      type: object
+      nullable: true
+      description: For Webhook type queues
+      required:
+        - url
+        - authType
+      properties:
+        url:
+          type: string
+          format: uri
+          pattern: '^https://'
+        method:
+          type: string
+          enum: [POST, PUT]
+        authType:
+          type: string
+          enum: [None, BearerToken, BasicAuth, ApiKey]
+        credential:
+          type: string
+          nullable: true
+          description: Only send if updating credential (will be encrypted at rest)
+        timeoutSeconds:
+          type: integer
+          minimum: 5
+          maximum: 120
+
+    DocumentListDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        fileSizeHumanReadable:
+          type: string
+        status:
+          type: string
+          enum: [Pending, Classified, Routed, Failed]
+        tags:
+          type: array
+          items:
+            type: string
+        createdTime:
+          type: string
+          format: date-time
+
+    PagedResultDto_RoutingQueueListDto:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          example: 12
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoutingQueueListDto'
+
+    PagedResultDto_DocumentListDto:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          example: 350
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentListDto'
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "DocFlow.Queues.InvalidWebhookUrl"
+            message:
+              type: string
+              example: "Webhook URL must use HTTPS protocol"
+            details:
+              type: string
+              nullable: true
+            validationErrors:
+              type: array
+              nullable: true
+              items:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  members:
+                    type: array
+                    items:
+                      type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Forbidden:
+      description: Insufficient permissions to access this resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+tags:
+  - name: Routing Queues
+    description: Management of routing queues (folders and webhooks) for document distribution

@@ -1,0 +1,632 @@
+openapi: 3.0.3
+info:
+  title: DocFlow Documents API
+  description: API for document upload, status tracking, and management
+  version: 1.0.0
+  contact:
+    name: DocFlow Team
+
+servers:
+  - url: https://api.docflow.example.com/api
+    description: Production server
+  - url: http://localhost:44300/api
+    description: Local development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /documents/upload:
+    post:
+      summary: Upload a single document
+      description: Upload a document file to a specified inbox for classification processing
+      operationId: uploadDocument
+      tags:
+        - Documents
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - inboxId
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The document file to upload (PDF, PNG, JPG, JPEG, TIFF)
+                inboxId:
+                  type: string
+                  format: uuid
+                  description: ID of the target inbox
+                  example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      responses:
+        '200':
+          description: Document uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '413':
+          description: File size exceeds maximum limit (50MB)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /documents/batch-upload:
+    post:
+      summary: Upload multiple documents
+      description: Upload multiple document files to an inbox in a single request
+      operationId: batchUploadDocuments
+      tags:
+        - Documents
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - files
+                - inboxId
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Array of document files to upload (max 20 files)
+                inboxId:
+                  type: string
+                  format: uuid
+                  description: ID of the target inbox
+      responses:
+        '200':
+          description: Batch upload completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  successCount:
+                    type: integer
+                    description: Number of successfully uploaded documents
+                    example: 18
+                  failureCount:
+                    type: integer
+                    description: Number of failed uploads
+                    example: 2
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        fileName:
+                          type: string
+                          example: "invoice_001.pdf"
+                        success:
+                          type: boolean
+                          example: true
+                        documentId:
+                          type: string
+                          format: uuid
+                          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                        errorMessage:
+                          type: string
+                          example: "File size exceeds maximum limit"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /documents:
+    get:
+      summary: List documents
+      description: Retrieve a paginated list of documents with optional filtering
+      operationId: getDocuments
+      tags:
+        - Documents
+      parameters:
+        - name: inboxId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by inbox ID
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Pending, Classified, Routed, Failed]
+          description: Filter by document status
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter by upload date (start)
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter by upload date (end)
+        - name: tags
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Filter by tags (OR logic)
+        - name: fileName
+          in: query
+          schema:
+            type: string
+          description: Search by filename (partial match)
+        - $ref: '#/components/parameters/SkipCount'
+        - $ref: '#/components/parameters/MaxResultCount'
+        - $ref: '#/components/parameters/Sorting'
+      responses:
+        '200':
+          description: List of documents
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResultDto_DocumentListDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /documents/{id}:
+    get:
+      summary: Get document details
+      description: Retrieve full details for a specific document including tags and classification history
+      operationId: getDocument
+      tags:
+        - Documents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Document ID
+      responses:
+        '200':
+          description: Document details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDetailDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Delete a document
+      description: Permanently delete a document and its associated file
+      operationId: deleteDocument
+      tags:
+        - Documents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Document ID
+      responses:
+        '204':
+          description: Document deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /documents/{id}/retry:
+    post:
+      summary: Retry failed document classification
+      description: Re-initiate classification processing for a failed document
+      operationId: retryDocumentClassification
+      tags:
+        - Documents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Document ID
+      responses:
+        '200':
+          description: Retry initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+        '400':
+          description: Document is not in Failed status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /documents/{id}/tags:
+    post:
+      summary: Add manual tag to document
+      description: Add a tag to a document manually (not via classification rule)
+      operationId: addManualTag
+      tags:
+        - Documents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Document ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tagName
+              properties:
+                tagName:
+                  type: string
+                  minLength: 1
+                  maxLength: 50
+                  example: "Urgent"
+      responses:
+        '200':
+          description: Tag added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /documents/{id}/tags/{tagName}:
+    delete:
+      summary: Remove manual tag from document
+      description: Remove a manually-added tag from a document
+      operationId: removeManualTag
+      tags:
+        - Documents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Document ID
+        - name: tagName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Tag name to remove
+      responses:
+        '200':
+          description: Tag removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDto'
+        '400':
+          description: Tag not found or not manually added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /documents/{id}/history:
+    get:
+      summary: Get document classification history
+      description: Retrieve the classification rule evaluation history for a document
+      operationId: getDocumentClassificationHistory
+      tags:
+        - Documents
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Document ID
+      responses:
+        '200':
+          description: Classification history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassificationHistoryEntryDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from authentication endpoint
+
+  parameters:
+    SkipCount:
+      name: skipCount
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Number of items to skip (for pagination)
+    
+    MaxResultCount:
+      name: maxResultCount
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Maximum number of items to return
+    
+    Sorting:
+      name: sorting
+      in: query
+      schema:
+        type: string
+        example: "createdTime desc"
+      description: Sorting criteria (format "field asc|desc")
+
+  schemas:
+    DocumentDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        fileName:
+          type: string
+          example: "invoice_2024_001.pdf"
+        fileSizeBytes:
+          type: integer
+          format: int64
+          example: 2048576
+        fileSizeHumanReadable:
+          type: string
+          example: "2.00 MB"
+        mimeType:
+          type: string
+          example: "application/pdf"
+        status:
+          type: string
+          enum: [Pending, Classified, Routed, Failed]
+          example: "Classified"
+        lastError:
+          type: string
+          nullable: true
+          example: null
+        retryCount:
+          type: integer
+          example: 0
+        inboxId:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        routingQueueId:
+          type: string
+          format: uuid
+          nullable: true
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["Invoice", "Accounting"]
+        createdTime:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00Z"
+        lastModifiedTime:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:35:00Z"
+
+    DocumentListDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        fileSizeHumanReadable:
+          type: string
+        status:
+          type: string
+          enum: [Pending, Classified, Routed, Failed]
+        tags:
+          type: array
+          items:
+            type: string
+        createdTime:
+          type: string
+          format: date-time
+
+    DocumentDetailDto:
+      allOf:
+        - $ref: '#/components/schemas/DocumentDto'
+        - type: object
+          properties:
+            blobReference:
+              type: string
+              description: Internal blob storage reference
+              example: "tenant-123/docs/3fa85f64-5717-4562-b3fc-2c963f66afa6/invoice_2024_001.pdf"
+            classificationConfidence:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              nullable: true
+              example: 0.95
+            classificationHistory:
+              type: array
+              items:
+                $ref: '#/components/schemas/ClassificationHistoryEntryDto'
+
+    ClassificationHistoryEntryDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ruleId:
+          type: string
+          format: uuid
+        ruleName:
+          type: string
+          example: "Invoice Recognition Rule"
+        matched:
+          type: boolean
+          example: true
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          nullable: true
+          example: 0.95
+        evaluatedAt:
+          type: string
+          format: date-time
+        criteriaSnapshot:
+          type: string
+          description: JSON snapshot of rule criteria at evaluation time
+          example: '{"filenamePattern": "invoice.*\\.pdf"}'
+
+    PagedResultDto_DocumentListDto:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          example: 150
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentListDto'
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "DocFlow.Documents.FileToLarge"
+            message:
+              type: string
+              example: "File size exceeds maximum limit of 50MB"
+            details:
+              type: string
+              nullable: true
+            validationErrors:
+              type: array
+              nullable: true
+              items:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  members:
+                    type: array
+                    items:
+                      type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Forbidden:
+      description: Insufficient permissions to access this resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+tags:
+  - name: Documents
+    description: Document upload, status tracking, and management operations
