@@ -136,17 +136,17 @@
 
 **Purpose**: Implement EF Core repositories and database mappings.
 
-- [ ] [T075] [P] Configure Document entity mapping with owned entities (src/DocFlow.EntityFrameworkCore/EntityConfigurations/DocumentConfiguration.cs)
-- [ ] [T076] [P] Configure ClassificationRule entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/ClassificationRuleConfiguration.cs)
-- [ ] [T077] [P] Configure RoutingQueue entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/RoutingQueueConfiguration.cs)
-- [ ] [T078] [P] Configure WebhookDelivery entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/WebhookDeliveryConfiguration.cs)
-- [ ] [T079] [P] Create value object converters for FileName, FileSize, MimeType, etc. (src/DocFlow.EntityFrameworkCore/ValueConverters/)
-- [ ] [T080] Implement EfCoreDocumentRepository (src/DocFlow.EntityFrameworkCore/Documents/EfCoreDocumentRepository.cs)
-- [ ] [T081] [US4] Implement SearchAsync with IQueryable filters in EfCoreDocumentRepository (src/DocFlow.EntityFrameworkCore/Documents/EfCoreDocumentRepository.cs)
-- [ ] [T082] Implement EfCoreClassificationRuleRepository (src/DocFlow.EntityFrameworkCore/ClassificationRules/EfCoreClassificationRuleRepository.cs)
-- [ ] [T083] [US5] Implement GetActiveRulesAsync with caching in EfCoreClassificationRuleRepository (src/DocFlow.EntityFrameworkCore/ClassificationRules/EfCoreClassificationRuleRepository.cs)
-- [ ] [T084] Implement EfCoreRoutingQueueRepository (src/DocFlow.EntityFrameworkCore/RoutingQueues/EfCoreRoutingQueueRepository.cs)
-- [ ] [T085] [US11] Implement EfCoreWebhookDeliveryRepository (src/DocFlow.EntityFrameworkCore/RoutingQueues/EfCoreWebhookDeliveryRepository.cs)
+- [x] [T075] [P] Configure Document entity mapping with owned entities (src/DocFlow.EntityFrameworkCore/EntityConfigurations/DocumentConfiguration.cs)
+- [x] [T076] [P] Configure ClassificationRule entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/ClassificationRuleConfiguration.cs)
+- [x] [T077] [P] Configure RoutingQueue entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/RoutingQueueConfiguration.cs)
+- [x] [T078] [P] Configure WebhookDelivery entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/WebhookDeliveryConfiguration.cs)
+- [x] [T079] [P] Create value object converters for FileName, FileSize, MimeType, etc. (src/DocFlow.EntityFrameworkCore/ValueConverters/)
+- [x] [T080] Implement EfCoreDocumentRepository (src/DocFlow.EntityFrameworkCore/Documents/EfCoreDocumentRepository.cs)
+- [x] [T081] [US4] Implement SearchAsync with IQueryable filters in EfCoreDocumentRepository (src/DocFlow.EntityFrameworkCore/Documents/EfCoreDocumentRepository.cs)
+- [x] [T082] Implement EfCoreClassificationRuleRepository (src/DocFlow.EntityFrameworkCore/ClassificationRules/EfCoreClassificationRuleRepository.cs)
+- [x] [T083] [US5] Implement GetActiveRulesAsync with caching in EfCoreClassificationRuleRepository (src/DocFlow.EntityFrameworkCore/ClassificationRules/EfCoreClassificationRuleRepository.cs)
+- [x] [T084] Implement EfCoreRoutingQueueRepository (src/DocFlow.EntityFrameworkCore/RoutingQueues/EfCoreRoutingQueueRepository.cs)
+- [x] [T085] [US11] Implement EfCoreWebhookDeliveryRepository (src/DocFlow.EntityFrameworkCore/RoutingQueues/EfCoreWebhookDeliveryRepository.cs)
 - [ ] [T086] Create database migration for Document/Rule/Queue tables (`Add-Migration InitialDocumentIntake`)
 
 ---

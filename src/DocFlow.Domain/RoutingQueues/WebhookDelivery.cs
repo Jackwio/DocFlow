@@ -10,7 +10,6 @@ namespace DocFlow.RoutingQueues;
 /// </summary>
 public sealed class WebhookDelivery : Entity<Guid>
 {
-    public Guid Id { get; private set; }
     public Guid DocumentId { get; private set; }
     public Guid QueueId { get; private set; }
     public int AttemptCount { get; private set; }
