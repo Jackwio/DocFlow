@@ -10,6 +10,7 @@
     * 若需要**自訂**的 Repository 方法，其**介面**應放在此處。
     * 例如：`IDocumentRepository`。
 * **領域服務 (Domain Services):**
+    * **命名規範：** 必須為 `Manager` 結尾（例如：`DocumentManager`）。
     * 處理涉及多個實體或複雜業務邏輯的領域服務（如果有的話）。
 
 ### 2. `DocFlow.Domain.Shared`
