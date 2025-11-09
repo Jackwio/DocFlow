@@ -1,0 +1,487 @@
+openapi: 3.0.3
+info:
+  title: DocFlow Webhooks API
+  description: API for monitoring webhook deliveries and managing retries
+  version: 1.0.0
+  contact:
+    name: DocFlow Team
+
+servers:
+  - url: https://api.docflow.example.com/api
+    description: Production server
+  - url: http://localhost:44300/api
+    description: Local development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /webhooks/deliveries:
+    get:
+      summary: List webhook deliveries
+      description: Retrieve a paginated list of webhook delivery records with filtering options
+      operationId: getWebhookDeliveries
+      tags:
+        - Webhooks
+      parameters:
+        - name: queueId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by routing queue ID
+        - name: documentId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by document ID
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Pending, Retrying, Delivered, Failed]
+          description: Filter by delivery status
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter by delivery attempt date (start)
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter by delivery attempt date (end)
+        - $ref: '#/components/parameters/SkipCount'
+        - $ref: '#/components/parameters/MaxResultCount'
+        - $ref: '#/components/parameters/Sorting'
+      responses:
+        '200':
+          description: List of webhook deliveries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResultDto_WebhookDeliveryListDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /webhooks/deliveries/{id}:
+    get:
+      summary: Get webhook delivery details
+      description: Retrieve full details for a specific webhook delivery including response and retry history
+      operationId: getWebhookDelivery
+      tags:
+        - Webhooks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Webhook delivery ID
+      responses:
+        '200':
+          description: Webhook delivery details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookDeliveryDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /webhooks/deliveries/{id}/retry:
+    post:
+      summary: Retry a failed webhook delivery
+      description: Manually retry a failed webhook delivery
+      operationId: retryWebhookDelivery
+      tags:
+        - Webhooks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Webhook delivery ID
+      responses:
+        '200':
+          description: Retry initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookDeliveryDto'
+        '400':
+          description: Delivery cannot be retried (already delivered or max retries exceeded)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /webhooks/deliveries/batch-retry:
+    post:
+      summary: Retry multiple failed webhook deliveries
+      description: Batch retry multiple failed webhook deliveries
+      operationId: batchRetryWebhookDeliveries
+      tags:
+        - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - deliveryIds
+              properties:
+                deliveryIds:
+                  type: array
+                  minItems: 1
+                  maxItems: 50
+                  items:
+                    type: string
+                    format: uuid
+                  description: Array of webhook delivery IDs to retry (max 50)
+                  example:
+                    - "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    - "5fb96f85-6828-5673-c4gd-3d074g77bgb7"
+      responses:
+        '200':
+          description: Batch retry completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  successCount:
+                    type: integer
+                    description: Number of successfully initiated retries
+                    example: 48
+                  failureCount:
+                    type: integer
+                    description: Number of failed retry initiations
+                    example: 2
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        deliveryId:
+                          type: string
+                          format: uuid
+                        success:
+                          type: boolean
+                        errorMessage:
+                          type: string
+                          nullable: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /webhooks/deliveries/stats:
+    get:
+      summary: Get webhook delivery statistics
+      description: Retrieve aggregated statistics about webhook delivery success/failure rates
+      operationId: getWebhookDeliveryStats
+      tags:
+        - Webhooks
+      parameters:
+        - name: queueId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter statistics by routing queue ID
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Statistics start date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Statistics end date
+      responses:
+        '200':
+          description: Webhook delivery statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookDeliveryStatsDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from authentication endpoint
+
+  parameters:
+    SkipCount:
+      name: skipCount
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Number of items to skip (for pagination)
+    
+    MaxResultCount:
+      name: maxResultCount
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Maximum number of items to return
+    
+    Sorting:
+      name: sorting
+      in: query
+      schema:
+        type: string
+        example: "createdTime desc"
+      description: Sorting criteria (format "field asc|desc")
+
+  schemas:
+    WebhookDeliveryDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        documentId:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        documentFileName:
+          type: string
+          description: Denormalized for convenience
+          example: "invoice_2024_001.pdf"
+        routingQueueId:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        routingQueueName:
+          type: string
+          description: Denormalized for convenience
+          example: "Accounting Webhook"
+        url:
+          type: string
+          format: uri
+          example: "https://external-system.example.com/api/webhooks/documents"
+        status:
+          type: string
+          enum: [Pending, Retrying, Delivered, Failed]
+          example: "Delivered"
+        retryCount:
+          type: integer
+          description: Number of retry attempts
+          example: 2
+        nextRetryAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: Scheduled time for next retry (null if delivered or max retries exceeded)
+          example: null
+        responseStatusCode:
+          type: integer
+          nullable: true
+          description: HTTP status code from webhook endpoint
+          example: 200
+        responseBody:
+          type: string
+          nullable: true
+          description: Response body from webhook endpoint (truncated to 2KB)
+          example: '{"status": "success", "documentId": "EXT-12345"}'
+        errorMessage:
+          type: string
+          nullable: true
+          description: Error message if delivery failed
+          example: null
+        responseTimeMs:
+          type: integer
+          nullable: true
+          description: Response time in milliseconds
+          example: 245
+        createdTime:
+          type: string
+          format: date-time
+          description: Time of first delivery attempt
+        lastModifiedTime:
+          type: string
+          format: date-time
+          description: Time of last delivery attempt
+
+    WebhookDeliveryListDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        documentFileName:
+          type: string
+        routingQueueName:
+          type: string
+        status:
+          type: string
+          enum: [Pending, Retrying, Delivered, Failed]
+        retryCount:
+          type: integer
+        responseStatusCode:
+          type: integer
+          nullable: true
+        createdTime:
+          type: string
+          format: date-time
+
+    WebhookDeliveryStatsDto:
+      type: object
+      properties:
+        totalDeliveries:
+          type: integer
+          description: Total number of delivery attempts in period
+          example: 1250
+        deliveredCount:
+          type: integer
+          description: Number of successfully delivered webhooks
+          example: 1190
+        failedCount:
+          type: integer
+          description: Number of failed deliveries (after all retries)
+          example: 35
+        pendingCount:
+          type: integer
+          description: Number of pending/retrying deliveries
+          example: 25
+        successRate:
+          type: number
+          format: float
+          description: Success rate percentage (delivered / total)
+          example: 95.2
+        averageResponseTimeMs:
+          type: integer
+          description: Average response time in milliseconds for successful deliveries
+          example: 320
+        medianResponseTimeMs:
+          type: integer
+          description: Median response time in milliseconds for successful deliveries
+          example: 280
+        p95ResponseTimeMs:
+          type: integer
+          description: 95th percentile response time in milliseconds
+          example: 650
+        byQueue:
+          type: array
+          description: Statistics broken down by routing queue
+          items:
+            type: object
+            properties:
+              queueId:
+                type: string
+                format: uuid
+              queueName:
+                type: string
+              totalDeliveries:
+                type: integer
+              successRate:
+                type: number
+                format: float
+              averageResponseTimeMs:
+                type: integer
+
+    PagedResultDto_WebhookDeliveryListDto:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          example: 1250
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WebhookDeliveryListDto'
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "DocFlow.Webhooks.MaxRetriesExceeded"
+            message:
+              type: string
+              example: "Webhook delivery has exceeded maximum retry attempts (5)"
+            details:
+              type: string
+              nullable: true
+            validationErrors:
+              type: array
+              nullable: true
+              items:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  members:
+                    type: array
+                    items:
+                      type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Forbidden:
+      description: Insufficient permissions to access this resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+tags:
+  - name: Webhooks
+    description: Webhook delivery monitoring and retry management

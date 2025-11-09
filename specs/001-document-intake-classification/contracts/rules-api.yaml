@@ -1,0 +1,643 @@
+openapi: 3.0.3
+info:
+  title: DocFlow Classification Rules API
+  description: API for managing classification rules that automatically tag and route documents
+  version: 1.0.0
+  contact:
+    name: DocFlow Team
+
+servers:
+  - url: https://api.docflow.example.com/api
+    description: Production server
+  - url: http://localhost:44300/api
+    description: Local development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /rules:
+    get:
+      summary: List classification rules
+      description: Retrieve a paginated list of classification rules
+      operationId: getRules
+      tags:
+        - Classification Rules
+      parameters:
+        - name: isActive
+          in: query
+          schema:
+            type: boolean
+          description: Filter by active/inactive status
+        - $ref: '#/components/parameters/SkipCount'
+        - $ref: '#/components/parameters/MaxResultCount'
+        - $ref: '#/components/parameters/Sorting'
+      responses:
+        '200':
+          description: List of classification rules
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagedResultDto_ClassificationRuleListDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      summary: Create a classification rule
+      description: Create a new classification rule with criteria and actions
+      operationId: createRule
+      tags:
+        - Classification Rules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClassificationRuleDto'
+      responses:
+        '200':
+          description: Rule created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationRuleDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /rules/{id}:
+    get:
+      summary: Get rule details
+      description: Retrieve full details for a specific classification rule
+      operationId: getRule
+      tags:
+        - Classification Rules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Rule ID
+      responses:
+        '200':
+          description: Rule details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationRuleDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update a classification rule
+      description: Update an existing classification rule's criteria and actions
+      operationId: updateRule
+      tags:
+        - Classification Rules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Rule ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClassificationRuleDto'
+      responses:
+        '200':
+          description: Rule updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationRuleDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Delete a classification rule
+      description: Permanently delete a classification rule
+      operationId: deleteRule
+      tags:
+        - Classification Rules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Rule ID
+      responses:
+        '204':
+          description: Rule deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /rules/{id}/enable:
+    put:
+      summary: Enable a classification rule
+      description: Activate a disabled classification rule
+      operationId: enableRule
+      tags:
+        - Classification Rules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Rule ID
+      responses:
+        '200':
+          description: Rule enabled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationRuleDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /rules/{id}/disable:
+    put:
+      summary: Disable a classification rule
+      description: Deactivate a classification rule (preserves settings for future re-enablement)
+      operationId: disableRule
+      tags:
+        - Classification Rules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Rule ID
+      responses:
+        '200':
+          description: Rule disabled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationRuleDto'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /rules/{id}/priority:
+    put:
+      summary: Update rule priority
+      description: Change the execution priority of a classification rule
+      operationId: updateRulePriority
+      tags:
+        - Classification Rules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Rule ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - priority
+              properties:
+                priority:
+                  type: integer
+                  minimum: 1
+                  maximum: 999
+                  description: New priority value (lower number = higher priority)
+                  example: 10
+      responses:
+        '200':
+          description: Priority updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationRuleDto'
+        '400':
+          description: Priority already in use by another rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /rules/{id}/dry-run:
+    post:
+      summary: Test rule against a document (dry-run)
+      description: Evaluate a classification rule against a specific document without applying changes
+      operationId: dryRunRule
+      tags:
+        - Classification Rules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Rule ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - documentId
+              properties:
+                documentId:
+                  type: string
+                  format: uuid
+                  description: ID of the document to test against
+                  example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      responses:
+        '200':
+          description: Dry-run evaluation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DryRunResultDto'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from authentication endpoint
+
+  parameters:
+    SkipCount:
+      name: skipCount
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      description: Number of items to skip (for pagination)
+    
+    MaxResultCount:
+      name: maxResultCount
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Maximum number of items to return
+    
+    Sorting:
+      name: sorting
+      in: query
+      schema:
+        type: string
+        example: "priority asc"
+      description: Sorting criteria (format "field asc|desc")
+
+  schemas:
+    ClassificationRuleDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        name:
+          type: string
+          example: "Invoice Recognition Rule"
+        description:
+          type: string
+          example: "Automatically classify invoices based on filename and content"
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 999
+          example: 10
+        isActive:
+          type: boolean
+          example: true
+        criteria:
+          $ref: '#/components/schemas/RuleCriteriaDto'
+        actions:
+          $ref: '#/components/schemas/RuleActionsDto'
+        matchCount:
+          type: integer
+          description: Total number of documents matched by this rule
+          example: 245
+        lastMatchedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2024-01-15T14:30:00Z"
+        createdTime:
+          type: string
+          format: date-time
+        lastModifiedTime:
+          type: string
+          format: date-time
+
+    ClassificationRuleListDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        priority:
+          type: integer
+        isActive:
+          type: boolean
+        matchCount:
+          type: integer
+        createdTime:
+          type: string
+          format: date-time
+
+    RuleCriteriaDto:
+      type: object
+      properties:
+        filenamePattern:
+          type: string
+          nullable: true
+          description: Regular expression pattern for filename matching
+          example: "invoice.*\\.pdf"
+        mimeType:
+          type: string
+          nullable: true
+          description: MIME type filter
+          example: "application/pdf"
+        fileSizeMinBytes:
+          type: integer
+          format: int64
+          nullable: true
+          description: Minimum file size in bytes
+          example: 102400
+        fileSizeMaxBytes:
+          type: integer
+          format: int64
+          nullable: true
+          description: Maximum file size in bytes
+          example: 10485760
+        requiredTextSnippets:
+          type: array
+          nullable: true
+          description: Text strings that must be present in document content
+          items:
+            type: string
+          example: ["Total Amount", "Invoice Number"]
+
+    RuleActionsDto:
+      type: object
+      properties:
+        tagsToApply:
+          type: array
+          description: Tags to apply when rule matches
+          minItems: 1
+          maxItems: 10
+          items:
+            type: string
+          example: ["Invoice", "Accounting"]
+        routingQueueId:
+          type: string
+          format: uuid
+          description: ID of the routing queue to send document to
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+
+    CreateClassificationRuleDto:
+      type: object
+      required:
+        - name
+        - priority
+        - criteria
+        - actions
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Invoice Recognition Rule"
+        description:
+          type: string
+          maxLength: 500
+          example: "Automatically classify invoices based on filename and content"
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 999
+          example: 10
+        criteria:
+          $ref: '#/components/schemas/RuleCriteriaDto'
+        actions:
+          $ref: '#/components/schemas/RuleActionsDto'
+
+    UpdateClassificationRuleDto:
+      type: object
+      required:
+        - name
+        - criteria
+        - actions
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        criteria:
+          $ref: '#/components/schemas/RuleCriteriaDto'
+        actions:
+          $ref: '#/components/schemas/RuleActionsDto'
+
+    DryRunResultDto:
+      type: object
+      properties:
+        matched:
+          type: boolean
+          description: Whether the rule matched the document
+          example: true
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Confidence score of the match (0-1)
+          example: 0.95
+        criteriaEvaluation:
+          type: object
+          description: Detailed evaluation of each criterion
+          properties:
+            filenamePatternMatched:
+              type: boolean
+              nullable: true
+              example: true
+            mimeTypeMatched:
+              type: boolean
+              nullable: true
+              example: true
+            fileSizeMatched:
+              type: boolean
+              nullable: true
+              example: true
+            textSnippetsMatched:
+              type: boolean
+              nullable: true
+              example: true
+            textSnippetsDetails:
+              type: array
+              nullable: true
+              items:
+                type: object
+                properties:
+                  snippet:
+                    type: string
+                  found:
+                    type: boolean
+              example:
+                - snippet: "Total Amount"
+                  found: true
+                - snippet: "Invoice Number"
+                  found: true
+        tagsToBeApplied:
+          type: array
+          description: Tags that would be applied if rule was executed
+          items:
+            type: string
+          example: ["Invoice", "Accounting"]
+        routingDestination:
+          type: object
+          description: Routing queue that document would be sent to
+          properties:
+            queueId:
+              type: string
+              format: uuid
+            queueName:
+              type: string
+          example:
+            queueId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            queueName: "Accounting Inbox"
+
+    PagedResultDto_ClassificationRuleListDto:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          example: 45
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClassificationRuleListDto'
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "DocFlow.Rules.InvalidRegexPattern"
+            message:
+              type: string
+              example: "The regex pattern is invalid or may cause ReDoS"
+            details:
+              type: string
+              nullable: true
+            validationErrors:
+              type: array
+              nullable: true
+              items:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  members:
+                    type: array
+                    items:
+                      type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or validation errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Unauthorized:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    Forbidden:
+      description: Insufficient permissions to access this resource
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+tags:
+  - name: Classification Rules
+    description: Management of classification rules for automatic document tagging and routing
