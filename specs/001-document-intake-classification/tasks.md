@@ -105,16 +105,16 @@
 
 **Purpose**: Implement routing queue aggregate for folder and webhook destinations.
 
-- [ ] [T058] Create WebhookConfiguration value object with URL, headers, retry policy (src/DocFlow.Domain/RoutingQueues/WebhookConfiguration.cs)
-- [ ] [T059] Create FolderPath value object with path validation (src/DocFlow.Domain/RoutingQueues/FolderPath.cs)
-- [ ] [T060] [US9] Create RoutingQueue aggregate root with CreateFolderQueue factory method using Guid Id (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
-- [ ] [T061] [US9] Add CreateWebhookQueue factory method to RoutingQueue (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
-- [ ] [T062] [US9] Add UpdateDestination method to RoutingQueue (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
-- [ ] [T063] [US11] Create WebhookDelivery entity with DocumentId, AttemptCount, Status, LastError (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
-- [ ] [T064] [US11] Add RecordDeliveryAttempt method to WebhookDelivery (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
-- [ ] [T065] [US11] Add RetryDelivery method to WebhookDelivery (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
-- [ ] [T066] Create IRoutingQueueRepository interface (src/DocFlow.Domain/RoutingQueues/IRoutingQueueRepository.cs)
-- [ ] [T067] [US11] Create IWebhookDeliveryRepository interface with FindFailedDeliveriesAsync (src/DocFlow.Domain/RoutingQueues/IWebhookDeliveryRepository.cs)
+- [x] [T058] Create WebhookConfiguration value object with URL, headers, retry policy (src/DocFlow.Domain/RoutingQueues/WebhookConfiguration.cs)
+- [x] [T059] Create FolderPath value object with path validation (src/DocFlow.Domain/RoutingQueues/FolderPath.cs)
+- [x] [T060] [US9] Create RoutingQueue aggregate root with CreateFolderQueue factory method using Guid Id (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
+- [x] [T061] [US9] Add CreateWebhookQueue factory method to RoutingQueue (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
+- [x] [T062] [US9] Add UpdateDestination method to RoutingQueue (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
+- [x] [T063] [US11] Create WebhookDelivery entity with DocumentId, AttemptCount, Status, LastError (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
+- [x] [T064] [US11] Add RecordDeliveryAttempt method to WebhookDelivery (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
+- [x] [T065] [US11] Add RetryDelivery method to WebhookDelivery (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
+- [x] [T066] Create IRoutingQueueRepository interface (src/DocFlow.Domain/RoutingQueues/IRoutingQueueRepository.cs)
+- [x] [T067] [US11] Create IWebhookDeliveryRepository interface with FindFailedDeliveriesAsync (src/DocFlow.Domain/RoutingQueues/IWebhookDeliveryRepository.cs)
 
 ---
 
