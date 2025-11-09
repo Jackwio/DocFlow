@@ -31,7 +31,35 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### Core Principles Compliance
+
+- [ ] **Business Logic Clarity**: All methods, classes use domain-specific language (no generic `Process()`, `Handle()`, etc.)
+- [ ] **Defensive Programming**: Input validation implemented at all entry points with specific exceptions
+- [ ] **Immutability & Encapsulation**: Value objects are immutable; aggregates expose only business methods
+- [ ] **Strongly-Typed IDs**: All domain concepts use strongly-typed IDs and value objects (no primitive obsession)
+- [ ] **Testing Coverage**: Plan includes unit tests (80%+ coverage), integration tests, performance tests, security tests
+- [ ] **Structured Logging**: Logging includes correlation IDs, structured data, proper log levels, audit trail
+- [ ] **Performance Targets**: Implementation meets defined SLAs (response times, throughput, scalability)
+
+### Security & Privacy Compliance
+
+- [ ] **File Encryption**: Documents encrypted at rest (AES-256) and in transit (TLS 1.2+)
+- [ ] **Access Control**: RBAC implemented with role definitions (Accounting, LegalAssistant, Admin)
+- [ ] **Tenant Isolation**: Multi-tenancy isolation enforced at data and application layers
+- [ ] **Audit Trail**: All state changes logged with 7-year retention policy
+- [ ] **Input Validation**: File names sanitized, sizes validated, rule expressions validated
+
+### Performance & Scalability Compliance
+
+- [ ] **Response Time**: API endpoints meet < 2s (p95), classification < 500ms (p95), routing < 100ms (p95)
+- [ ] **Throughput**: Supports 100 concurrent uploads, 100 docs/min classification, 200 docs/min routing
+- [ ] **Large Files**: Streaming implemented for files > 10MB, chunked uploads for files > 10MB
+- [ ] **Database Optimization**: Indexes on TenantId/DocumentId/Status/CreatedAt, pagination on all lists
+- [ ] **Caching**: Classification rules and tenant config cached with appropriate TTL
+- [ ] **Background Jobs**: ABP Background Jobs used with retry policies and back-pressure handling
+- [ ] **K8s Readiness**: Resource limits set, health probes implemented, graceful shutdown handled
+
+**Violations Requiring Justification**: If any checkbox above is unchecked, document in "Complexity Tracking" section with rationale and simpler alternatives considered.
 
 ## Project Structure
 

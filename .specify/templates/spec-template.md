@@ -105,11 +105,31 @@
 <!--
   ACTION REQUIRED: Define measurable success criteria.
   These must be technology-agnostic and measurable.
+  Include performance, security, and quality metrics per DocFlow constitution.
 -->
 
 ### Measurable Outcomes
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
+- **SC-001**: [User experience metric, e.g., "Users can complete account creation in under 2 minutes"]
+- **SC-002**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+### Performance Criteria (Required for DocFlow)
+
+- **SC-004**: [Response time, e.g., "API responds in < 2s (p95) for document upload"]
+- **SC-005**: [Throughput, e.g., "System processes at least 100 documents/minute"]
+- **SC-006**: [Scalability, e.g., "System handles 100 concurrent users without degradation"]
+- **SC-007**: [Large file handling, e.g., "System successfully processes 50MB PDF files via streaming"]
+
+### Security & Compliance Criteria (Required for DocFlow)
+
+- **SC-008**: [Encryption, e.g., "All documents encrypted at rest (AES-256) and in transit (TLS 1.2+)"]
+- **SC-009**: [Access control, e.g., "Users can only access documents within their tenant"]
+- **SC-010**: [Audit trail, e.g., "All document state changes logged with immutable audit trail"]
+- **SC-011**: [Input validation, e.g., "System rejects malformed files and invalid inputs with specific error messages"]
+
+### Quality Criteria (Required for DocFlow)
+
+- **SC-012**: [Test coverage, e.g., "80% code coverage for Domain/Application layers; 100% for critical paths"]
+- **SC-013**: [Observability, e.g., "All operations logged with correlation IDs for end-to-end tracing"]
+- **SC-014**: [Error handling, e.g., "System provides clear, actionable error messages for all failure scenarios"]

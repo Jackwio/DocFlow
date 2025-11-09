@@ -63,11 +63,18 @@ description: "Task list template for feature implementation"
 Examples of foundational tasks (adjust based on your project):
 
 - [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
+- [ ] T005 [P] Implement authentication/authorization framework with RBAC (Accounting, LegalAssistant, Admin roles)
 - [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
+- [ ] T007 Create base models/entities that all stories depend on (use strongly-typed IDs per constitution)
+- [ ] T008 Configure error handling and logging infrastructure (structured logging with correlation IDs)
 - [ ] T009 Setup environment configuration management
+- [ ] T010 [P] Implement file encryption framework (AES-256 at rest, TLS 1.2+ in transit)
+- [ ] T011 [P] Setup multi-tenancy isolation framework with tenant filtering
+- [ ] T012 [P] Configure ABP Background Jobs framework with retry policies
+- [ ] T013 [P] Setup audit trail logging (immutable, 7-year retention)
+- [ ] T014 [P] Configure blob storage abstraction with streaming support
+- [ ] T015 [P] Setup caching framework (Redis for distributed scenarios)
+- [ ] T016 Implement health check endpoints (/health/live, /health/ready)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -82,18 +89,27 @@ Examples of foundational tasks (adjust based on your project):
 ### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+> **DocFlow Constitution Requirement**: Aim for 80% coverage (Domain/Application), 100% for critical paths
 
 - [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T012 [P] [US1] Unit tests for domain logic in tests/unit/test_[name].py (use xUnit v3 + FakeItEasy)
+- [ ] T013 [P] [US1] Performance test for [critical operation] in tests/performance/test_[name].cs (use BenchmarkDotNet)
+- [ ] T014 [P] [US1] Security test for [authentication/authorization] in tests/integration/test_[name]_security.py
+- [ ] T015 [P] [US1] Security test for tenant isolation in tests/integration/test_[name]_tenancy.py
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
-- [ ] T016 [US1] Add validation and error handling
-- [ ] T017 [US1] Add logging for user story 1 operations
+- [ ] T016 [P] [US1] Create [Entity1] model in src/models/[entity1].py (use strongly-typed IDs, immutable value objects)
+- [ ] T017 [P] [US1] Create [Entity2] model in src/models/[entity2].py (use strongly-typed IDs, immutable value objects)
+- [ ] T018 [US1] Implement [Service] in src/services/[service].py (depends on T016, T017)
+- [ ] T019 [US1] Add input validation with specific exceptions (e.g., InvalidDocumentFormatException)
+- [ ] T020 [US1] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T021 [US1] Add structured logging with correlation IDs for all operations
+- [ ] T022 [US1] Implement audit trail logging for all state changes
+- [ ] T023 [US1] Add error handling with business-meaningful error messages
+- [ ] T024 [US1] Verify performance targets met (< 2s API response, < 500ms classification)
+- [ ] T025 [US1] Verify security requirements (encryption, RBAC, tenant isolation)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -151,11 +167,16 @@ Examples of foundational tasks (adjust based on your project):
 **Purpose**: Improvements that affect multiple user stories
 
 - [ ] TXXX [P] Documentation updates in docs/
-- [ ] TXXX Code cleanup and refactoring
-- [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
-- [ ] TXXX Security hardening
-- [ ] TXXX Run quickstart.md validation
+- [ ] TXXX Code cleanup and refactoring (ensure domain-specific naming throughout)
+- [ ] TXXX Performance optimization across all stories (verify < 2s API, < 500ms classification targets)
+- [ ] TXXX [P] Additional unit tests to reach 80% coverage threshold (if not already met)
+- [ ] TXXX [P] Additional integration tests with Testcontainers (database, external APIs)
+- [ ] TXXX Security hardening review (verify encryption, RBAC, tenant isolation, input validation)
+- [ ] TXXX Observability improvements (verify correlation IDs, structured logging, APM integration)
+- [ ] TXXX Performance benchmarking with BenchmarkDotNet (establish baselines)
+- [ ] TXXX Load testing for concurrent users and throughput targets
+- [ ] TXXX Code coverage report generation and verification (80%+ Domain/Application, 100% critical paths)
+- [ ] TXXX [P] Run quickstart.md validation
 
 ---
 
