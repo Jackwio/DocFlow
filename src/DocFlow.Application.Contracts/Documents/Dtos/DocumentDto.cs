@@ -17,5 +17,6 @@ public sealed class DocumentDto : EntityDto<Guid>
     public List<string> Tags { get; set; } = new();
     public string? LastError { get; set; }
     public Guid? RoutedToQueueId { get; set; }
+    public AiSuggestionDto? AiSuggestion { get; set; }
     public DateTime CreationTime { get; set; }
 }

@@ -13,5 +13,15 @@ public enum TagSource
     /// <summary>
     /// Tag was manually added by an operator.
     /// </summary>
-    Manual = 1
+    Manual = 1,
+
+    /// <summary>
+    /// Tag was suggested by AI model.
+    /// </summary>
+    AiSuggested = 2,
+
+    /// <summary>
+    /// Tag was applied from AI suggestion.
+    /// </summary>
+    AiApplied = 3
 }
