@@ -175,14 +175,14 @@
 
 **Purpose**: Implement document upload with blob storage and validation.
 
-- [ ] [T104] [US1] Create DocumentManagement folder (src/DocFlow.Application/DocumentManagement/)
-- [ ] [T105] [US1] Create DocumentApplicationService class (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T106] [US1] Implement UploadDocumentAsync method with blob storage (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T107] [US1] Add file MIME type validation in UploadDocumentAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T108] [US1] Add file size validation (50MB max) in UploadDocumentAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T109] [US1] Implement UploadBatchDocumentsAsync for batch upload (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T104] [US1] Create DocumentManagement folder (src/DocFlow.Application/DocumentManagement/)
+- [x] [T105] [US1] Create DocumentApplicationService class (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T106] [US1] Implement UploadDocumentAsync method with blob storage (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T107] [US1] Add file MIME type validation in UploadDocumentAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T108] [US1] Add file size validation (50MB max) in UploadDocumentAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T109] [US1] Implement UploadBatchDocumentsAsync for batch upload (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
 - [ ] [T110] [US1] Create DocumentUploadedEventHandler to trigger classification job (src/DocFlow.Application/DocumentManagement/DocumentUploadedEventHandler.cs)
-- [ ] [T111] [US1] Create AutoMapper profile for Document → DocumentDto (src/DocFlow.Application/DocFlowApplicationAutoMapperProfile.cs)
+- [x] [T111] [US1] Create AutoMapper profile for Document → DocumentDto (src/DocFlow.Application/DocFlowApplicationAutoMapperProfile.cs)
 
 ---
 
@@ -190,10 +190,10 @@
 
 **Purpose**: Implement document listing and status filtering.
 
-- [ ] [T112] [US2] Implement GetDocumentAsync by ID (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T113] [US2] Implement GetDocumentListAsync with pagination (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T114] [US2] Add status filter parameter to GetDocumentListAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T115] [US2] Add date range filter to GetDocumentListAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T112] [US2] Implement GetDocumentAsync by ID (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T113] [US2] Implement GetDocumentListAsync with pagination (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T114] [US2] Add status filter parameter to GetDocumentListAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T115] [US2] Add date range filter to GetDocumentListAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
 
 ---
 
@@ -201,9 +201,9 @@
 
 **Purpose**: Implement manual retry for failed documents.
 
-- [ ] [T116] [US3] Implement RetryClassificationAsync method (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T117] [US3] Add validation to ensure document is in Failed status (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T118] [US3] Trigger classification job after retry (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T116] [US3] Implement RetryClassificationAsync method (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T117] [US3] Add validation to ensure document is in Failed status (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T118] [US3] Trigger classification job after retry (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
 
 ---
 
@@ -211,10 +211,10 @@
 
 **Purpose**: Implement advanced document search.
 
-- [ ] [T119] [US4] Implement SearchDocumentsAsync method (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T120] [US4] Add tag filtering to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T121] [US4] Add filename search to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T122] [US4] Add multi-status filtering to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T119] [US4] Implement SearchDocumentsAsync method (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T120] [US4] Add tag filtering to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T121] [US4] Add filename search to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T122] [US4] Add multi-status filtering to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
 
 ---
 
