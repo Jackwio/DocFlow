@@ -63,7 +63,60 @@ public sealed class DocumentConfiguration : IEntityTypeConfiguration<Document>
             t.Property(tag => tag.Source)
                 .IsRequired();
 
+            // Confidence score for AI tags
+            t.OwnsOne(tag => tag.Confidence, cs =>
+            {
+                cs.Property(s => s.Value)
+                    .HasColumnName("ConfidenceScore");
+            });
+
             t.WithOwner().HasForeignKey("DocumentId");
+        });
+
+        // AI Suggestion as owned entity
+        builder.OwnsOne(d => d.AiSuggestion, ai =>
+        {
+            ai.Property(a => a.SuggestedQueueId)
+                .HasColumnName("AiSuggestedQueueId");
+
+            ai.Property(a => a.Summary)
+                .HasColumnName("AiSummary")
+                .HasMaxLength(2000);
+
+            ai.Property(a => a.GeneratedAt)
+                .HasColumnName("AiGeneratedAt")
+                .IsRequired();
+
+            // Overall confidence
+            ai.OwnsOne(a => a.Confidence, cs =>
+            {
+                cs.Property(s => s.Value)
+                    .HasColumnName("AiConfidence")
+                    .IsRequired();
+            });
+
+            // Suggested tags as owned collection
+            ai.OwnsMany(a => a.SuggestedTags, st =>
+            {
+                st.ToTable("DocumentAiSuggestedTags");
+
+                st.Property(s => s.TagName)
+                    .HasConversion(new TagNameConverter())
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                st.Property(s => s.Reasoning)
+                    .HasMaxLength(500);
+
+                st.OwnsOne(s => s.Confidence, cs =>
+                {
+                    cs.Property(c => c.Value)
+                        .HasColumnName("Confidence")
+                        .IsRequired();
+                });
+
+                st.WithOwner().HasForeignKey("DocumentId");
+            });
         });
 
         // Classification history as owned collection
