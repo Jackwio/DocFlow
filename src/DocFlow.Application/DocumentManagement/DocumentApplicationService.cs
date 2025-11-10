@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DocFlow.Documents;
@@ -8,6 +9,7 @@ using DocFlow.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.BlobStoring;
 
 namespace DocFlow.DocumentManagement;
 
@@ -19,36 +21,58 @@ namespace DocFlow.DocumentManagement;
 public class DocumentApplicationService : ApplicationService
 {
     private readonly IDocumentRepository _documentRepository;
+    private readonly IBlobContainer<DocFlowBlobContainer> _blobContainer;
 
-    public DocumentApplicationService(IDocumentRepository documentRepository)
+    public DocumentApplicationService(
+        IDocumentRepository documentRepository,
+        IBlobContainer<DocFlowBlobContainer> blobContainer)
     {
         _documentRepository = documentRepository;
+        _blobContainer = blobContainer;
     }
 
     /// <summary>
-    /// US1: Upload a document with blob storage and validation.
+    /// US1: Upload a document with file stream.
+    /// Backend uploads file to blob storage.
     /// </summary>
-    public async Task<DocumentDto> UploadDocumentAsync(UploadDocumentDto input)
+    public async Task<DocumentDto> UploadDocumentAsync(Stream fileStream, string originalFileName, long fileLength, string contentType, UploadDocumentDto input)
     {
+        if (fileStream == null || fileLength == 0)
+        {
+            throw new ArgumentException("File is required");
+        }
+
         // Validate file size (50MB max)
         const long maxFileSize = 50 * 1024 * 1024; // 50MB
-        if (input.FileSizeBytes > maxFileSize)
+        if (fileLength > maxFileSize)
         {
             throw new ArgumentException($"File size exceeds maximum allowed size of {maxFileSize / (1024 * 1024)}MB");
         }
 
         // Validate MIME type
         var allowedMimeTypes = new[] { "application/pdf", "image/png", "image/jpeg", "image/tiff" };
-        if (!allowedMimeTypes.Contains(input.MimeType.ToLowerInvariant()))
+        var mimeTypeLower = contentType.ToLowerInvariant();
+        if (!allowedMimeTypes.Contains(mimeTypeLower))
         {
-            throw new ArgumentException($"File type {input.MimeType} is not allowed");
+            throw new ArgumentException($"File type {contentType} is not allowed. Allowed types: PDF, PNG, JPG, TIFF");
         }
 
+        // Use custom filename if provided, otherwise use original
+        var fileNameStr = string.IsNullOrWhiteSpace(input.FileName) ? originalFileName : input.FileName;
+        
         // Create value objects
-        var fileName = FileName.Create(input.FileName);
-        var fileSize = FileSize.Create(input.FileSizeBytes);
-        var mimeType = MimeType.Create(input.MimeType);
-        var blobReference = BlobReference.Create(input.BlobContainerName, input.BlobName);
+        var fileName = FileName.Create(fileNameStr);
+        var fileSize = FileSize.Create(fileLength);
+        var mimeType = MimeType.Create(mimeTypeLower);
+
+        // Generate unique blob name
+        var blobName = $"{GuidGenerator.Create()}{Path.GetExtension(fileNameStr)}";
+        var containerName = "documents";
+
+        // Upload file to blob storage
+        await _blobContainer.SaveAsync(blobName, fileStream, overrideExisting: true);
+
+        var blobReference = BlobReference.Create(containerName, blobName);
 
         // Create document aggregate
         var document = Document.RegisterUpload(
@@ -64,22 +88,6 @@ public class DocumentApplicationService : ApplicationService
 
         // Map to DTO
         return ObjectMapper.Map<Document, DocumentDto>(document);
-    }
-
-    /// <summary>
-    /// US1: Upload multiple documents in batch.
-    /// </summary>
-    public async Task<List<DocumentDto>> UploadBatchDocumentsAsync(List<UploadDocumentDto> inputs)
-    {
-        var results = new List<DocumentDto>();
-
-        foreach (var input in inputs)
-        {
-            var result = await UploadDocumentAsync(input);
-            results.Add(result);
-        }
-
-        return results;
     }
 
     /// <summary>

@@ -4,28 +4,15 @@ namespace DocFlow.Documents.Dtos;
 
 /// <summary>
 /// DTO for uploading a document.
-/// File content should be handled separately via blob storage.
+/// Used with multipart/form-data requests where API receives the file.
 /// </summary>
 public sealed class UploadDocumentDto
 {
-    [Required]
+    /// <summary>
+    /// Optional custom filename. If not provided, original filename from form file will be used.
+    /// </summary>
     [StringLength(255)]
-    public string FileName { get; set; } = string.Empty;
-
-    [Required]
-    public long FileSizeBytes { get; set; }
-
-    [Required]
-    [StringLength(100)]
-    public string MimeType { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(500)]
-    public string BlobContainerName { get; set; } = string.Empty;
-
-    [Required]
-    [StringLength(500)]
-    public string BlobName { get; set; } = string.Empty;
+    public string? FileName { get; set; }
 
     public string? Description { get; set; }
 }

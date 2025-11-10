@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DocFlow.DocumentManagement;
 using DocFlow.Documents.Dtos;
 using DocFlow.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.AspNetCore.Mvc;
@@ -26,27 +27,75 @@ public class DocumentsController : AbpControllerBase
     }
 
     /// <summary>
-    /// US1: Upload a document with validation.
+    /// US1: Upload a document with file content (multipart/form-data).
+    /// Backend receives the file and uploads it to blob storage.
     /// </summary>
-    /// <param name="input">Document upload information</param>
+    /// <param name="file">The file to upload</param>
+    /// <param name="fileName">Optional custom filename (defaults to original filename)</param>
+    /// <param name="description">Optional description</param>
     /// <returns>Created document details</returns>
     [HttpPost]
     [Route("upload")]
-    public async Task<DocumentDto> UploadAsync([FromBody] UploadDocumentDto input)
+    [Consumes("multipart/form-data")]
+    public async Task<DocumentDto> UploadAsync(
+        [FromForm] IFormFile file,
+        [FromForm] string? fileName = null,
+        [FromForm] string? description = null)
     {
-        return await _documentService.UploadDocumentAsync(input);
+        if (file == null || file.Length == 0)
+        {
+            throw new ArgumentException("File is required");
+        }
+
+        var input = new UploadDocumentDto
+        {
+            FileName = fileName,
+            Description = description
+        };
+
+        await using var stream = file.OpenReadStream();
+        return await _documentService.UploadDocumentAsync(
+            stream,
+            file.FileName,
+            file.Length,
+            file.ContentType,
+            input);
     }
 
     /// <summary>
-    /// US1: Upload multiple documents in batch.
+    /// US1: Upload multiple documents in batch (multipart/form-data).
+    /// Backend receives multiple files and uploads them to blob storage.
     /// </summary>
-    /// <param name="inputs">List of document upload information</param>
+    /// <param name="files">The files to upload</param>
     /// <returns>List of created document details</returns>
     [HttpPost]
     [Route("upload-batch")]
-    public async Task<List<DocumentDto>> UploadBatchAsync([FromBody] List<UploadDocumentDto> inputs)
+    [Consumes("multipart/form-data")]
+    public async Task<List<DocumentDto>> UploadBatchAsync([FromForm] IFormFileCollection files)
     {
-        return await _documentService.UploadBatchDocumentsAsync(inputs);
+        if (files == null || files.Count == 0)
+        {
+            throw new ArgumentException("At least one file is required");
+        }
+
+        var results = new List<DocumentDto>();
+
+        foreach (var file in files)
+        {
+            var input = new UploadDocumentDto();
+            await using var stream = file.OpenReadStream();
+            
+            var result = await _documentService.UploadDocumentAsync(
+                stream,
+                file.FileName,
+                file.Length,
+                file.ContentType,
+                input);
+            
+            results.Add(result);
+        }
+
+        return results;
     }
 
     /// <summary>
