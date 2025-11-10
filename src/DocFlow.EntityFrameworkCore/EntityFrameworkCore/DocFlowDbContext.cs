@@ -85,6 +85,11 @@ public class DocFlowDbContext :
         builder.ConfigureTenantManagement();
 
         /* Configure your own tables/entities inside here */
+        // Ensure value/owned types are not treated as separate root entities by EF Core.
+        // Some types used as owned types can be discovered earlier by module/configuration
+        // scanning and inadvertently added as entity types. Ignore them explicitly
+        // so they can be configured as owned within their owner entity configuration.
+        builder.Ignore<ClassificationHistoryEntry>();
 
         builder.ApplyConfiguration(new DocumentConfiguration());
         builder.ApplyConfiguration(new ClassificationRuleConfiguration());

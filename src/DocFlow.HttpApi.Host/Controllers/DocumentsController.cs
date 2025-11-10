@@ -37,20 +37,14 @@ public class DocumentsController : AbpControllerBase
     [HttpPost]
     [Route("upload")]
     [Consumes("multipart/form-data")]
-    public async Task<DocumentDto> UploadAsync(
-        [FromForm] IFormFile file,
-        [FromForm] string? fileName = null,
-        [FromForm] string? description = null)
+    public async Task<DocumentDto> UploadAsync([FromForm] UploadDocumentWithFileDto input)
     {
-        if (file == null || file.Length == 0)
-        {
-            throw new ArgumentException("File is required");
-        }
+        var file = input?.File ?? throw new ArgumentException("File is required");
 
-        var input = new UploadDocumentDto
+        var uploadInput = new UploadDocumentDto
         {
-            FileName = fileName,
-            Description = description
+            FileName = input.FileName,
+            Description = input.Description
         };
 
         await using var stream = file.OpenReadStream();
@@ -59,7 +53,7 @@ public class DocumentsController : AbpControllerBase
             file.FileName,
             file.Length,
             file.ContentType,
-            input);
+            uploadInput);
     }
 
     /// <summary>

@@ -35,13 +35,14 @@ public sealed class ClassificationRuleConfiguration : IEntityTypeConfiguration<C
                 .IsRequired();
         });
 
-        // ApplyTags as owned collection
+        // ApplyTags as owned collection (TagName is a value object with a string Value)
         builder.OwnsMany(r => r.ApplyTags, t =>
         {
             t.ToTable("ClassificationRuleTags");
-            
-            t.Property<string>("Value")
-                .HasConversion(new TagNameConverter())
+
+            // The owned type is TagName whose `Value` property is already a string,
+            // so configure the `Value` column directly (no converter needed here).
+            t.Property(tagName => tagName.Value)
                 .HasColumnName("TagName")
                 .HasMaxLength(50)
                 .IsRequired();
