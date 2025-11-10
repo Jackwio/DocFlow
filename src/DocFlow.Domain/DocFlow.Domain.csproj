@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="UglyToad.PdfPig" Version="1.7.0-custom-5" />
+    <PackageReference Include="Volo.Abp.BlobStoring" Version="9.0.0" />
     <PackageReference Include="Volo.Abp.Emailing" Version="9.3.6" />
     <PackageReference Include="Volo.Abp.Identity.Domain" Version="9.3.6" />
     <PackageReference Include="Volo.Abp.PermissionManagement.Domain.Identity" Version="9.3.6" />

@@ -20,10 +20,10 @@
 
 **Purpose**: Initialize project structure, dependencies, and development environment.
 
-- [ ] [T001] [P] Create feature branch `feat/document-intake-classification` from `production`
-- [ ] [T002] [P] Install UglyToad.PdfPig 0.1.8+ NuGet package (src/DocFlow.Domain/DocFlow.Domain.csproj)
-- [ ] [T003] [P] Install FluentValidation 11+ NuGet package (src/DocFlow.Application.Contracts/DocFlow.Application.Contracts.csproj)
-- [ ] [T004] [P] Install Polly 8+ NuGet package (src/DocFlow.Application/DocFlow.Application.csproj)
+- [x] [T001] [P] Create feature branch `feat/document-intake-classification` from `production`
+- [x] [T002] [P] Install UglyToad.PdfPig 0.1.8+ NuGet package (src/DocFlow.Domain/DocFlow.Domain.csproj)
+- [x] [T003] [P] Install FluentValidation 11+ NuGet package (src/DocFlow.Application.Contracts/DocFlow.Application.Contracts.csproj)
+- [x] [T004] [P] Install Polly 8+ NuGet package (src/DocFlow.Application/DocFlow.Application.csproj)
 - [ ] [T005] [P] Configure Redis connection string in appsettings.json (src/DocFlow.HttpApi.Host/appsettings.json)
 - [ ] [T006] [P] Configure Hangfire with ABP Background Jobs (src/DocFlow.HttpApi.Host/DocFlowHttpApiHostModule.cs)
 - [ ] [T007] [P] Create Docker Compose file for PostgreSQL 16 + Redis 7 (docker-compose.yml)
@@ -37,17 +37,17 @@
 
 **Purpose**: Create foundational value objects with business validation logic used by all aggregates.
 
-- [ ] [T011] [P] Create FileName value object with validation (src/DocFlow.Domain/Documents/FileName.cs)
-- [ ] [T012] [P] Create FileSize value object with range validation (src/DocFlow.Domain/Documents/FileSize.cs)
-- [ ] [T013] [P] Create MimeType value object with whitelist validation (src/DocFlow.Domain/Documents/MimeType.cs)
-- [ ] [T014] [P] Create BlobReference value object (src/DocFlow.Domain/Documents/BlobReference.cs)
-- [ ] [T015] [P] Create TagName value object (src/DocFlow.Domain/Documents/TagName.cs)
-- [ ] [T016] [P] Create ConfidenceScore value object (src/DocFlow.Domain/Documents/ConfidenceScore.cs)
-- [ ] [T017] [P] Create ErrorMessage value object (src/DocFlow.Domain/Shared/ErrorMessage.cs)
-- [ ] [T018] [P] Create DocumentStatus enum (Pending/Classified/Routed/Failed) (src/DocFlow.Domain.Shared/Enums/DocumentStatus.cs)
-- [ ] [T019] [P] Create TagSource enum (Automatic/Manual) (src/DocFlow.Domain.Shared/Enums/TagSource.cs)
-- [ ] [T020] [P] Create RuleConditionType enum (FileNameRegex/MimeType/FileSize/TextContent) (src/DocFlow.Domain.Shared/Enums/RuleConditionType.cs)
-- [ ] [T021] [P] Create QueueType enum (Folder/Webhook) (src/DocFlow.Domain.Shared/Enums/QueueType.cs)
+- [x] [T011] [P] Create FileName value object with validation (src/DocFlow.Domain/Documents/FileName.cs)
+- [x] [T012] [P] Create FileSize value object with range validation (src/DocFlow.Domain/Documents/FileSize.cs)
+- [x] [T013] [P] Create MimeType value object with whitelist validation (src/DocFlow.Domain/Documents/MimeType.cs)
+- [x] [T014] [P] Create BlobReference value object (src/DocFlow.Domain/Documents/BlobReference.cs)
+- [x] [T015] [P] Create TagName value object (src/DocFlow.Domain/Documents/TagName.cs)
+- [x] [T016] [P] Create ConfidenceScore value object (src/DocFlow.Domain/Documents/ConfidenceScore.cs)
+- [x] [T017] [P] Create ErrorMessage value object (src/DocFlow.Domain/Shared/ErrorMessage.cs)
+- [x] [T018] [P] Create DocumentStatus enum (Pending/Classified/Routed/Failed) (src/DocFlow.Domain.Shared/Enums/DocumentStatus.cs)
+- [x] [T019] [P] Create TagSource enum (Automatic/Manual) (src/DocFlow.Domain.Shared/Enums/TagSource.cs)
+- [x] [T020] [P] Create RuleConditionType enum (FileNameRegex/MimeType/FileSize/TextContent) (src/DocFlow.Domain.Shared/Enums/RuleConditionType.cs)
+- [x] [T021] [P] Create QueueType enum (Folder/Webhook) (src/DocFlow.Domain.Shared/Enums/QueueType.cs)
 
 ---
 
@@ -55,26 +55,26 @@
 
 **Purpose**: Implement Document aggregate root with all business methods.
 
-- [ ] [T022] Create Tag entity with Name and Source properties (src/DocFlow.Domain/Documents/Tag.cs)
-- [ ] [T023] Create ClassificationHistoryEntry entity with RuleId, TagName, MatchedCondition (src/DocFlow.Domain/Documents/ClassificationHistoryEntry.cs)
-- [ ] [T024] [US1] Create Document aggregate root with RegisterUpload factory method using Guid Id (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T025] [US2] Add Status property with private setter to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T026] [US2] Add ApplyClassificationResult method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T027] [US2] Add MarkAsRouted method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T028] [US3] Add RecordClassificationFailure method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T029] [US3] Add RetryClassification method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T030] [US10] Add AddManualTag method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T031] [US10] Add RemoveManualTag method to Document (src/DocFlow.Domain/Documents/Document.cs)
-- [ ] [T032] [US1] Create DocumentUploadedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentUploadedEvent.cs)
-- [ ] [T033] [US2] Create DocumentClassifiedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentClassifiedEvent.cs)
-- [ ] [T034] [US2] Create DocumentRoutedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentRoutedEvent.cs)
-- [ ] [T035] [US3] Create DocumentClassificationFailedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentClassificationFailedEvent.cs)
-- [ ] [T036] [US3] Create DocumentRetryInitiatedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentRetryInitiatedEvent.cs)
-- [ ] [T037] [US10] Create ManualTagAddedEvent domain event (src/DocFlow.Domain/Documents/Events/ManualTagAddedEvent.cs)
-- [ ] [T038] [US10] Create ManualTagRemovedEvent domain event (src/DocFlow.Domain/Documents/Events/ManualTagRemovedEvent.cs)
-- [ ] [T039] Create IDocumentRepository interface (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
-- [ ] [T040] [US4] Add FindByStatusAsync method to IDocumentRepository (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
-- [ ] [T041] [US4] Add SearchAsync method with filtering to IDocumentRepository (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
+- [x] [T022] Create Tag entity with Name and Source properties (src/DocFlow.Domain/Documents/Tag.cs)
+- [x] [T023] Create ClassificationHistoryEntry entity with RuleId, TagName, MatchedCondition (src/DocFlow.Domain/Documents/ClassificationHistoryEntry.cs)
+- [x] [T024] [US1] Create Document aggregate root with RegisterUpload factory method using Guid Id (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T025] [US2] Add Status property with private setter to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T026] [US2] Add ApplyClassificationResult method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T027] [US2] Add MarkAsRouted method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T028] [US3] Add RecordClassificationFailure method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T029] [US3] Add RetryClassification method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T030] [US10] Add AddManualTag method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T031] [US10] Add RemoveManualTag method to Document (src/DocFlow.Domain/Documents/Document.cs)
+- [x] [T032] [US1] Create DocumentUploadedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentUploadedEvent.cs)
+- [x] [T033] [US2] Create DocumentClassifiedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentClassifiedEvent.cs)
+- [x] [T034] [US2] Create DocumentRoutedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentRoutedEvent.cs)
+- [x] [T035] [US3] Create DocumentClassificationFailedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentClassificationFailedEvent.cs)
+- [x] [T036] [US3] Create DocumentRetryInitiatedEvent domain event (src/DocFlow.Domain/Documents/Events/DocumentRetryInitiatedEvent.cs)
+- [x] [T037] [US10] Create ManualTagAddedEvent domain event (src/DocFlow.Domain/Documents/Events/ManualTagAddedEvent.cs)
+- [x] [T038] [US10] Create ManualTagRemovedEvent domain event (src/DocFlow.Domain/Documents/Events/ManualTagRemovedEvent.cs)
+- [x] [T039] Create IDocumentRepository interface (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
+- [x] [T040] [US4] Add FindByStatusAsync method to IDocumentRepository (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
+- [x] [T041] [US4] Add SearchAsync method with filtering to IDocumentRepository (src/DocFlow.Domain/Documents/IDocumentRepository.cs)
 
 ---
 
@@ -82,22 +82,22 @@
 
 **Purpose**: Implement classification rule aggregate with condition matching logic.
 
-- [ ] [T042] Create RuleCondition value object with Type, Pattern, MatchValue (src/DocFlow.Domain/ClassificationRules/RuleCondition.cs)
-- [ ] [T043] Create RulePriority value object (src/DocFlow.Domain/ClassificationRules/RulePriority.cs)
-- [ ] [T044] [US5] Create ClassificationRule aggregate root with DefineRule factory method using Guid Id (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T045] [US5] Add ApplyTags list property to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T046] [US5] Add Conditions list property to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T047] [US5] Add UpdateConditions method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T048] [US5] Add UpdateTags method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T049] [US7] Add UpdatePriority method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T050] [US8] Add Activate/Deactivate methods to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T051] [US5] Add MatchesAsync method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
-- [ ] [T052] [US5] Create ClassificationRuleCreatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleCreatedEvent.cs)
-- [ ] [T053] [US5] Create ClassificationRuleUpdatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleUpdatedEvent.cs)
-- [ ] [T054] [US8] Create ClassificationRuleActivatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleActivatedEvent.cs)
-- [ ] [T055] [US8] Create ClassificationRuleDeactivatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleDeactivatedEvent.cs)
-- [ ] [T056] Create IClassificationRuleRepository interface (src/DocFlow.Domain/ClassificationRules/IClassificationRuleRepository.cs)
-- [ ] [T057] [US5] Add GetActiveRulesAsync method to IClassificationRuleRepository (src/DocFlow.Domain/ClassificationRules/IClassificationRuleRepository.cs)
+- [x] [T042] Create RuleCondition value object with Type, Pattern, MatchValue (src/DocFlow.Domain/ClassificationRules/RuleCondition.cs)
+- [x] [T043] Create RulePriority value object (src/DocFlow.Domain/ClassificationRules/RulePriority.cs)
+- [x] [T044] [US5] Create ClassificationRule aggregate root with DefineRule factory method using Guid Id (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T045] [US5] Add ApplyTags list property to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T046] [US5] Add Conditions list property to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T047] [US5] Add UpdateConditions method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T048] [US5] Add UpdateTags method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T049] [US7] Add UpdatePriority method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T050] [US8] Add Activate/Deactivate methods to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T051] [US5] Add MatchesAsync method to ClassificationRule (src/DocFlow.Domain/ClassificationRules/ClassificationRule.cs)
+- [x] [T052] [US5] Create ClassificationRuleCreatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleCreatedEvent.cs)
+- [x] [T053] [US5] Create ClassificationRuleUpdatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleUpdatedEvent.cs)
+- [x] [T054] [US8] Create ClassificationRuleActivatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleActivatedEvent.cs)
+- [x] [T055] [US8] Create ClassificationRuleDeactivatedEvent domain event (src/DocFlow.Domain/ClassificationRules/Events/ClassificationRuleDeactivatedEvent.cs)
+- [x] [T056] Create IClassificationRuleRepository interface (src/DocFlow.Domain/ClassificationRules/IClassificationRuleRepository.cs)
+- [x] [T057] [US5] Add GetActiveRulesAsync method to IClassificationRuleRepository (src/DocFlow.Domain/ClassificationRules/IClassificationRuleRepository.cs)
 
 ---
 
@@ -105,16 +105,16 @@
 
 **Purpose**: Implement routing queue aggregate for folder and webhook destinations.
 
-- [ ] [T058] Create WebhookConfiguration value object with URL, headers, retry policy (src/DocFlow.Domain/RoutingQueues/WebhookConfiguration.cs)
-- [ ] [T059] Create FolderPath value object with path validation (src/DocFlow.Domain/RoutingQueues/FolderPath.cs)
-- [ ] [T060] [US9] Create RoutingQueue aggregate root with CreateFolderQueue factory method using Guid Id (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
-- [ ] [T061] [US9] Add CreateWebhookQueue factory method to RoutingQueue (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
-- [ ] [T062] [US9] Add UpdateDestination method to RoutingQueue (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
-- [ ] [T063] [US11] Create WebhookDelivery entity with DocumentId, AttemptCount, Status, LastError (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
-- [ ] [T064] [US11] Add RecordDeliveryAttempt method to WebhookDelivery (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
-- [ ] [T065] [US11] Add RetryDelivery method to WebhookDelivery (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
-- [ ] [T066] Create IRoutingQueueRepository interface (src/DocFlow.Domain/RoutingQueues/IRoutingQueueRepository.cs)
-- [ ] [T067] [US11] Create IWebhookDeliveryRepository interface with FindFailedDeliveriesAsync (src/DocFlow.Domain/RoutingQueues/IWebhookDeliveryRepository.cs)
+- [x] [T058] Create WebhookConfiguration value object with URL, headers, retry policy (src/DocFlow.Domain/RoutingQueues/WebhookConfiguration.cs)
+- [x] [T059] Create FolderPath value object with path validation (src/DocFlow.Domain/RoutingQueues/FolderPath.cs)
+- [x] [T060] [US9] Create RoutingQueue aggregate root with CreateFolderQueue factory method using Guid Id (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
+- [x] [T061] [US9] Add CreateWebhookQueue factory method to RoutingQueue (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
+- [x] [T062] [US9] Add UpdateDestination method to RoutingQueue (src/DocFlow.Domain/RoutingQueues/RoutingQueue.cs)
+- [x] [T063] [US11] Create WebhookDelivery entity with DocumentId, AttemptCount, Status, LastError (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
+- [x] [T064] [US11] Add RecordDeliveryAttempt method to WebhookDelivery (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
+- [x] [T065] [US11] Add RetryDelivery method to WebhookDelivery (src/DocFlow.Domain/RoutingQueues/WebhookDelivery.cs)
+- [x] [T066] Create IRoutingQueueRepository interface (src/DocFlow.Domain/RoutingQueues/IRoutingQueueRepository.cs)
+- [x] [T067] [US11] Create IWebhookDeliveryRepository interface with FindFailedDeliveriesAsync (src/DocFlow.Domain/RoutingQueues/IWebhookDeliveryRepository.cs)
 
 ---
 
@@ -122,13 +122,13 @@
 
 **Purpose**: Implement domain services for classification and routing logic.
 
-- [ ] [T068] [US5] Create ClassificationRuleManager domain service (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
-- [ ] [T069] [US5] Add EvaluateRulesAsync method to ClassificationRuleManager (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
-- [ ] [T070] [US6] Add EvaluateRuleInDryRunModeAsync method to ClassificationRuleManager (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
-- [ ] [T071] [US1] Create PdfTextExtractionManager domain service using PdfPig (src/DocFlow.Domain/Documents/PdfTextExtractionManager.cs)
-- [ ] [T072] [US1] Add ExtractTextAsync method to PdfTextExtractionManager (src/DocFlow.Domain/Documents/PdfTextExtractionManager.cs)
-- [ ] [T073] [US9] Create RoutingManager domain service (src/DocFlow.Domain/RoutingQueues/RoutingManager.cs)
-- [ ] [T074] [US9] Add RouteDocumentToQueueAsync method to RoutingManager (src/DocFlow.Domain/RoutingQueues/RoutingManager.cs)
+- [x] [T068] [US5] Create ClassificationRuleManager domain service (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
+- [x] [T069] [US5] Add EvaluateRulesAsync method to ClassificationRuleManager (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
+- [x] [T070] [US6] Add EvaluateRuleInDryRunModeAsync method to ClassificationRuleManager (src/DocFlow.Domain/ClassificationRules/ClassificationRuleManager.cs)
+- [x] [T071] [US1] Create PdfTextExtractionManager domain service using PdfPig (src/DocFlow.Domain/Documents/PdfTextExtractionManager.cs)
+- [x] [T072] [US1] Add ExtractTextAsync method to PdfTextExtractionManager (src/DocFlow.Domain/Documents/PdfTextExtractionManager.cs)
+- [x] [T073] [US9] Create RoutingManager domain service (src/DocFlow.Domain/RoutingQueues/RoutingManager.cs)
+- [x] [T074] [US9] Add RouteDocumentToQueueAsync method to RoutingManager (src/DocFlow.Domain/RoutingQueues/RoutingManager.cs)
 
 ---
 
@@ -136,17 +136,17 @@
 
 **Purpose**: Implement EF Core repositories and database mappings.
 
-- [ ] [T075] [P] Configure Document entity mapping with owned entities (src/DocFlow.EntityFrameworkCore/EntityConfigurations/DocumentConfiguration.cs)
-- [ ] [T076] [P] Configure ClassificationRule entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/ClassificationRuleConfiguration.cs)
-- [ ] [T077] [P] Configure RoutingQueue entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/RoutingQueueConfiguration.cs)
-- [ ] [T078] [P] Configure WebhookDelivery entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/WebhookDeliveryConfiguration.cs)
-- [ ] [T079] [P] Create value object converters for FileName, FileSize, MimeType, etc. (src/DocFlow.EntityFrameworkCore/ValueConverters/)
-- [ ] [T080] Implement EfCoreDocumentRepository (src/DocFlow.EntityFrameworkCore/Documents/EfCoreDocumentRepository.cs)
-- [ ] [T081] [US4] Implement SearchAsync with IQueryable filters in EfCoreDocumentRepository (src/DocFlow.EntityFrameworkCore/Documents/EfCoreDocumentRepository.cs)
-- [ ] [T082] Implement EfCoreClassificationRuleRepository (src/DocFlow.EntityFrameworkCore/ClassificationRules/EfCoreClassificationRuleRepository.cs)
-- [ ] [T083] [US5] Implement GetActiveRulesAsync with caching in EfCoreClassificationRuleRepository (src/DocFlow.EntityFrameworkCore/ClassificationRules/EfCoreClassificationRuleRepository.cs)
-- [ ] [T084] Implement EfCoreRoutingQueueRepository (src/DocFlow.EntityFrameworkCore/RoutingQueues/EfCoreRoutingQueueRepository.cs)
-- [ ] [T085] [US11] Implement EfCoreWebhookDeliveryRepository (src/DocFlow.EntityFrameworkCore/RoutingQueues/EfCoreWebhookDeliveryRepository.cs)
+- [x] [T075] [P] Configure Document entity mapping with owned entities (src/DocFlow.EntityFrameworkCore/EntityConfigurations/DocumentConfiguration.cs)
+- [x] [T076] [P] Configure ClassificationRule entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/ClassificationRuleConfiguration.cs)
+- [x] [T077] [P] Configure RoutingQueue entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/RoutingQueueConfiguration.cs)
+- [x] [T078] [P] Configure WebhookDelivery entity mapping (src/DocFlow.EntityFrameworkCore/EntityConfigurations/WebhookDeliveryConfiguration.cs)
+- [x] [T079] [P] Create value object converters for FileName, FileSize, MimeType, etc. (src/DocFlow.EntityFrameworkCore/ValueConverters/)
+- [x] [T080] Implement EfCoreDocumentRepository (src/DocFlow.EntityFrameworkCore/Documents/EfCoreDocumentRepository.cs)
+- [x] [T081] [US4] Implement SearchAsync with IQueryable filters in EfCoreDocumentRepository (src/DocFlow.EntityFrameworkCore/Documents/EfCoreDocumentRepository.cs)
+- [x] [T082] Implement EfCoreClassificationRuleRepository (src/DocFlow.EntityFrameworkCore/ClassificationRules/EfCoreClassificationRuleRepository.cs)
+- [x] [T083] [US5] Implement GetActiveRulesAsync with caching in EfCoreClassificationRuleRepository (src/DocFlow.EntityFrameworkCore/ClassificationRules/EfCoreClassificationRuleRepository.cs)
+- [x] [T084] Implement EfCoreRoutingQueueRepository (src/DocFlow.EntityFrameworkCore/RoutingQueues/EfCoreRoutingQueueRepository.cs)
+- [x] [T085] [US11] Implement EfCoreWebhookDeliveryRepository (src/DocFlow.EntityFrameworkCore/RoutingQueues/EfCoreWebhookDeliveryRepository.cs)
 - [ ] [T086] Create database migration for Document/Rule/Queue tables (`Add-Migration InitialDocumentIntake`)
 
 ---
@@ -155,19 +155,19 @@
 
 **Purpose**: Create DTOs for all application services.
 
-- [ ] [T091] [P] [US1] Create UploadDocumentDto with file validation (src/DocFlow.Application.Contracts/Documents/Dtos/UploadDocumentDto.cs)
-- [ ] [T092] [P] [US1] Create DocumentDto with Status, Tags, LastError (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentDto.cs)
-- [ ] [T093] [P] [US2] Create DocumentListDto for list views (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentListDto.cs)
-- [ ] [T094] [P] [US4] Create DocumentSearchDto with filtering parameters (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentSearchDto.cs)
-- [ ] [T095] [P] [US5] Create ClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/ClassificationRuleDto.cs)
-- [ ] [T096] [P] [US5] Create CreateClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/CreateClassificationRuleDto.cs)
-- [ ] [T097] [P] [US5] Create UpdateClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/UpdateClassificationRuleDto.cs)
-- [ ] [T098] [P] [US6] Create DryRunResultDto with matched rules (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/DryRunResultDto.cs)
-- [ ] [T099] [P] [US9] Create RoutingQueueDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/RoutingQueueDto.cs)
-- [ ] [T100] [P] [US9] Create CreateRoutingQueueDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/CreateRoutingQueueDto.cs)
-- [ ] [T101] [P] [US10] Create AddManualTagDto (src/DocFlow.Application.Contracts/Documents/Dtos/AddManualTagDto.cs)
-- [ ] [T102] [P] [US11] Create WebhookDeliveryDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/WebhookDeliveryDto.cs)
-- [ ] [T103] [P] [US12] Create ClassificationHistoryDto (src/DocFlow.Application.Contracts/Documents/Dtos/ClassificationHistoryDto.cs)
+- [x] [T091] [P] [US1] Create UploadDocumentDto with file validation (src/DocFlow.Application.Contracts/Documents/Dtos/UploadDocumentDto.cs)
+- [x] [T092] [P] [US1] Create DocumentDto with Status, Tags, LastError (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentDto.cs)
+- [x] [T093] [P] [US2] Create DocumentListDto for list views (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentListDto.cs)
+- [x] [T094] [P] [US4] Create DocumentSearchDto with filtering parameters (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentSearchDto.cs)
+- [x] [T095] [P] [US5] Create ClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/ClassificationRuleDto.cs)
+- [x] [T096] [P] [US5] Create CreateClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/CreateClassificationRuleDto.cs)
+- [x] [T097] [P] [US5] Create UpdateClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/UpdateClassificationRuleDto.cs)
+- [x] [T098] [P] [US6] Create DryRunResultDto with matched rules (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/DryRunResultDto.cs)
+- [x] [T099] [P] [US9] Create RoutingQueueDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/RoutingQueueDto.cs)
+- [x] [T100] [P] [US9] Create CreateRoutingQueueDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/CreateRoutingQueueDto.cs)
+- [x] [T101] [P] [US10] Create AddManualTagDto (src/DocFlow.Application.Contracts/Documents/Dtos/AddManualTagDto.cs)
+- [x] [T102] [P] [US11] Create WebhookDeliveryDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/WebhookDeliveryDto.cs)
+- [x] [T103] [P] [US12] Create ClassificationHistoryDto (src/DocFlow.Application.Contracts/Documents/Dtos/ClassificationHistoryDto.cs)
 
 ---
 
@@ -175,14 +175,14 @@
 
 **Purpose**: Implement document upload with blob storage and validation.
 
-- [ ] [T104] [US1] Create DocumentManagement folder (src/DocFlow.Application/DocumentManagement/)
-- [ ] [T105] [US1] Create DocumentApplicationService class (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T106] [US1] Implement UploadDocumentAsync method with blob storage (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T107] [US1] Add file MIME type validation in UploadDocumentAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T108] [US1] Add file size validation (50MB max) in UploadDocumentAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T109] [US1] Implement UploadBatchDocumentsAsync for batch upload (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T104] [US1] Create DocumentManagement folder (src/DocFlow.Application/DocumentManagement/)
+- [x] [T105] [US1] Create DocumentApplicationService class (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T106] [US1] Implement UploadDocumentAsync method with blob storage (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T107] [US1] Add file MIME type validation in UploadDocumentAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T108] [US1] Add file size validation (50MB max) in UploadDocumentAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T109] [US1] Implement UploadBatchDocumentsAsync for batch upload (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
 - [ ] [T110] [US1] Create DocumentUploadedEventHandler to trigger classification job (src/DocFlow.Application/DocumentManagement/DocumentUploadedEventHandler.cs)
-- [ ] [T111] [US1] Create AutoMapper profile for Document → DocumentDto (src/DocFlow.Application/DocFlowApplicationAutoMapperProfile.cs)
+- [x] [T111] [US1] Create AutoMapper profile for Document → DocumentDto (src/DocFlow.Application/DocFlowApplicationAutoMapperProfile.cs)
 
 ---
 
@@ -190,10 +190,10 @@
 
 **Purpose**: Implement document listing and status filtering.
 
-- [ ] [T112] [US2] Implement GetDocumentAsync by ID (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T113] [US2] Implement GetDocumentListAsync with pagination (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T114] [US2] Add status filter parameter to GetDocumentListAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T115] [US2] Add date range filter to GetDocumentListAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T112] [US2] Implement GetDocumentAsync by ID (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T113] [US2] Implement GetDocumentListAsync with pagination (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T114] [US2] Add status filter parameter to GetDocumentListAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T115] [US2] Add date range filter to GetDocumentListAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
 
 ---
 
@@ -201,9 +201,9 @@
 
 **Purpose**: Implement manual retry for failed documents.
 
-- [ ] [T116] [US3] Implement RetryClassificationAsync method (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T117] [US3] Add validation to ensure document is in Failed status (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T118] [US3] Trigger classification job after retry (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T116] [US3] Implement RetryClassificationAsync method (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T117] [US3] Add validation to ensure document is in Failed status (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T118] [US3] Trigger classification job after retry (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
 
 ---
 
@@ -211,10 +211,10 @@
 
 **Purpose**: Implement advanced document search.
 
-- [ ] [T119] [US4] Implement SearchDocumentsAsync method (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T120] [US4] Add tag filtering to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T121] [US4] Add filename search to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
-- [ ] [T122] [US4] Add multi-status filtering to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T119] [US4] Implement SearchDocumentsAsync method (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T120] [US4] Add tag filtering to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T121] [US4] Add filename search to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
+- [x] [T122] [US4] Add multi-status filtering to SearchDocumentsAsync (src/DocFlow.Application/DocumentManagement/DocumentApplicationService.cs)
 
 ---
 
@@ -331,15 +331,15 @@
 
 **Purpose**: Expose REST APIs for all application services.
 
-- [ ] [T169] [P] [US1] Create DocumentsController with UploadAsync endpoint (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
-- [ ] [T170] [P] [US1] Add UploadBatchAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
-- [ ] [T171] [P] [US2] Add GetAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
-- [ ] [T172] [P] [US2] Add GetListAsync endpoint with status filter to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
-- [ ] [T173] [P] [US3] Add RetryClassificationAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
-- [ ] [T174] [P] [US4] Add SearchAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
-- [ ] [T175] [P] [US10] Add AddManualTagAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
-- [ ] [T176] [P] [US10] Add RemoveManualTagAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
-- [ ] [T177] [P] [US12] Add GetClassificationHistoryAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T169] [P] [US1] Create DocumentsController with UploadAsync endpoint (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T170] [P] [US1] Add UploadBatchAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T171] [P] [US2] Add GetAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T172] [P] [US2] Add GetListAsync endpoint with status filter to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T173] [P] [US3] Add RetryClassificationAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T174] [P] [US4] Add SearchAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T175] [P] [US10] Add AddManualTagAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T176] [P] [US10] Add RemoveManualTagAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
+- [x] [T177] [P] [US12] Add GetClassificationHistoryAsync endpoint to DocumentsController (src/DocFlow.HttpApi.Host/Controllers/DocumentsController.cs)
 - [ ] [T178] [P] [US5] Create ClassificationRulesController with CRUD endpoints (src/DocFlow.HttpApi.Host/Controllers/ClassificationRulesController.cs)
 - [ ] [T179] [P] [US6] Add TestRuleInDryRunAsync endpoint to ClassificationRulesController (src/DocFlow.HttpApi.Host/Controllers/ClassificationRulesController.cs)
 - [ ] [T180] [P] [US7] Add UpdatePriorityAsync endpoint to ClassificationRulesController (src/DocFlow.HttpApi.Host/Controllers/ClassificationRulesController.cs)

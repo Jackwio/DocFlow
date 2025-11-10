@@ -12,6 +12,8 @@
 * **領域服務 (Domain Services):**
     * **命名規範：** 必須為 `Manager` 結尾（例如：`DocumentManager`）。
     * 處理涉及多個實體或複雜業務邏輯的領域服務（如果有的話）。
+* **Value Object :**
+    * 必須繼承 `ValueObject` class。
 
 ### 2. `DocFlow.Domain.Shared`
 **共享領域層 (Domain Shared Layer)**

@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocFlow.ClassificationRules;
+using DocFlow.Documents;
+using DocFlow.EntityFrameworkCore.EntityConfigurations;
+using DocFlow.RoutingQueues;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -24,6 +28,12 @@ public class DocFlowDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+
+    // Document Intake & Classification
+    public DbSet<Document> Documents { get; set; }
+    public DbSet<ClassificationRule> ClassificationRules { get; set; }
+    public DbSet<RoutingQueue> RoutingQueues { get; set; }
+    public DbSet<WebhookDelivery> WebhookDeliveries { get; set; }
 
     #region Entities from the modules
 
@@ -75,12 +85,15 @@ public class DocFlowDbContext :
         builder.ConfigureTenantManagement();
 
         /* Configure your own tables/entities inside here */
+        // Ensure value/owned types are not treated as separate root entities by EF Core.
+        // Some types used as owned types can be discovered earlier by module/configuration
+        // scanning and inadvertently added as entity types. Ignore them explicitly
+        // so they can be configured as owned within their owner entity configuration.
+        builder.Ignore<ClassificationHistoryEntry>();
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(DocFlowConsts.DbTablePrefix + "YourEntities", DocFlowConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        builder.ApplyConfiguration(new DocumentConfiguration());
+        builder.ApplyConfiguration(new ClassificationRuleConfiguration());
+        builder.ApplyConfiguration(new RoutingQueueConfiguration());
+        builder.ApplyConfiguration(new WebhookDeliveryConfiguration());
     }
 }

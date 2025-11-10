@@ -29,6 +29,9 @@ using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.BlobStoring;
+using Volo.Abp.BlobStoring.FileSystem;
+using DocFlow.Documents;
 
 namespace DocFlow;
 
@@ -41,7 +44,8 @@ namespace DocFlow;
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpAccountWebOpenIddictModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpSwashbuckleModule)
+    typeof(AbpSwashbuckleModule),
+    typeof(AbpBlobStoringFileSystemModule)
 )]
 public class DocFlowHttpApiHostModule : AbpModule
 {
@@ -68,6 +72,7 @@ public class DocFlowHttpApiHostModule : AbpModule
         ConfigureUrls(configuration);
         ConfigureConventionalControllers();
         ConfigureVirtualFileSystem(context);
+        ConfigureBlobStorage(context, hostingEnvironment);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
     }
@@ -136,6 +141,27 @@ public class DocFlowHttpApiHostModule : AbpModule
         Configure<AbpAspNetCoreMvcOptions>(options =>
         {
             options.ConventionalControllers.Create(typeof(DocFlowApplicationModule).Assembly);
+        });
+    }
+
+    private void ConfigureBlobStorage(ServiceConfigurationContext context, IHostEnvironment hostingEnvironment)
+    {
+        Configure<AbpBlobStoringOptions>(options =>
+        {
+            options.Containers.Configure<DocFlowBlobContainer>(container =>
+            {
+                container.UseFileSystem(fileSystem =>
+                {
+                    // Store files in wwwroot/documents with tenant-specific subfolders
+                    var basePath = Path.Combine(hostingEnvironment.ContentRootPath, "wwwroot", "documents");
+                    fileSystem.BasePath = basePath;
+                    
+                    // Enable multi-tenancy: files will be organized in tenant-specific folders
+                    // Format: wwwroot/documents/{tenantId}/{blobName}
+                    // For host (null tenant): wwwroot/documents/host/{blobName}
+                    fileSystem.AppendContainerNameToBasePath = false;
+                });
+            });
         });
     }
 
