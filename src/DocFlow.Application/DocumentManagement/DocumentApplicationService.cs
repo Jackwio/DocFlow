@@ -65,11 +65,14 @@ public class DocumentApplicationService : ApplicationService
         var fileSize = FileSize.Create(fileLength);
         var mimeType = MimeType.Create(mimeTypeLower);
 
-        // Generate unique blob name
-        var blobName = $"{GuidGenerator.Create()}{Path.GetExtension(fileNameStr)}";
+        // Generate unique blob name with tenant-specific path
+        // Format: {tenantId}/{guid}.{extension} or host/{guid}.{extension} for null tenant
+        var tenantFolder = CurrentTenant.Id?.ToString() ?? "host";
+        var uniqueFileName = $"{GuidGenerator.Create()}{Path.GetExtension(fileNameStr)}";
+        var blobName = $"{tenantFolder}/{uniqueFileName}";
         var containerName = "documents";
 
-        // Upload file to blob storage
+        // Upload file to blob storage (will be saved to wwwroot/documents/{tenantId}/{guid}.ext)
         await _blobContainer.SaveAsync(blobName, fileStream, overrideExisting: true);
 
         var blobReference = BlobReference.Create(containerName, blobName);
