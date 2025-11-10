@@ -1,4 +1,6 @@
-﻿using Volo.Abp.Account;
+﻿using DocFlow.AiServices;
+using Microsoft.Extensions.DependencyInjection;
+using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -27,5 +29,8 @@ public class DocFlowApplicationModule : AbpModule
         {
             options.AddMaps<DocFlowApplicationModule>();
         });
+
+        // Register AI classification service
+        context.Services.AddTransient<IAiClassificationService, OpenAiClassificationService>();
     }
 }

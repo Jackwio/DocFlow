@@ -27,6 +27,7 @@ public sealed class Document : FullAuditedAggregateRoot<Guid>, IMultiTenant
     public DocumentStatus Status { get; private set; }
     public ErrorMessage? LastError { get; private set; }
     public Guid? RoutedToQueueId { get; private set; }
+    public AiSuggestion? AiSuggestion { get; private set; }
 
     public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
     public IReadOnlyCollection<ClassificationHistoryEntry> ClassificationHistory => _classificationHistory.AsReadOnly();
@@ -183,6 +184,44 @@ public sealed class Document : FullAuditedAggregateRoot<Guid>, IMultiTenant
         _tags.Remove(tagToRemove);
 
         AddLocalEvent(new ManualTagRemovedEvent(Id, tagName));
+    }
+
+    /// <summary>
+    /// Stores AI-generated suggestions for the document.
+    /// </summary>
+    public void StoreAiSuggestion(AiSuggestion aiSuggestion)
+    {
+        if (aiSuggestion == null) throw new ArgumentNullException(nameof(aiSuggestion));
+
+        AiSuggestion = aiSuggestion;
+
+        AddLocalEvent(new AiSuggestionGeneratedEvent(Id, aiSuggestion));
+    }
+
+    /// <summary>
+    /// Applies AI suggestions to the document by converting them to actual tags.
+    /// </summary>
+    public void ApplyAiSuggestions()
+    {
+        if (AiSuggestion == null)
+            throw new InvalidOperationException("No AI suggestions available to apply");
+
+        foreach (var suggestedTag in AiSuggestion.SuggestedTags)
+        {
+            if (!AlreadyHasTag(suggestedTag.TagName))
+            {
+                var aiTag = Tag.CreateAiApplied(suggestedTag.TagName, suggestedTag.Confidence);
+                _tags.Add(aiTag);
+            }
+        }
+
+        // Optionally update status if document is in Pending state
+        if (Status == DocumentStatus.Pending)
+        {
+            Status = DocumentStatus.Classified;
+        }
+
+        AddLocalEvent(new AiSuggestionsAppliedEvent(Id, AiSuggestion.SuggestedTags.Select(t => t.TagName).ToList()));
     }
 
     private bool AlreadyHasTag(TagName tagName)

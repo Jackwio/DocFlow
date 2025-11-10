@@ -23,7 +23,8 @@ public class DocFlowApplicationAutoMapperProfile : Profile
             .ForMember(d => d.FileSizeBytes, opt => opt.MapFrom(s => s.FileSize.Bytes))
             .ForMember(d => d.MimeType, opt => opt.MapFrom(s => s.MimeType.Value))
             .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags.Select(t => t.Name.Value).ToList()))
-            .ForMember(d => d.LastError, opt => opt.MapFrom(s => s.LastError != null ? s.LastError.Value : null));
+            .ForMember(d => d.LastError, opt => opt.MapFrom(s => s.LastError != null ? s.LastError.Value : null))
+            .ForMember(d => d.AiSuggestion, opt => opt.MapFrom(s => s.AiSuggestion));
 
         CreateMap<Document, DocumentListDto>()
             .ForMember(d => d.FileName, opt => opt.MapFrom(s => s.FileName.Value))
@@ -33,6 +34,15 @@ public class DocFlowApplicationAutoMapperProfile : Profile
         CreateMap<ClassificationHistoryEntry, ClassificationHistoryDto>()
             .ForMember(d => d.TagName, opt => opt.MapFrom(s => s.TagName.Value))
             .ForMember(d => d.ConfidenceScore, opt => opt.MapFrom(s => s.ConfidenceScore.Value));
+
+        // AI Suggestion mappings
+        CreateMap<AiSuggestion, AiSuggestionDto>()
+            .ForMember(d => d.Confidence, opt => opt.MapFrom(s => s.Confidence.Value))
+            .ForMember(d => d.SuggestedTags, opt => opt.MapFrom(s => s.SuggestedTags));
+
+        CreateMap<SuggestedTag, SuggestedTagDto>()
+            .ForMember(d => d.TagName, opt => opt.MapFrom(s => s.TagName.Value))
+            .ForMember(d => d.Confidence, opt => opt.MapFrom(s => s.Confidence.Value));
 
         // ClassificationRule mappings
         CreateMap<ClassificationRule, ClassificationRuleDto>()
