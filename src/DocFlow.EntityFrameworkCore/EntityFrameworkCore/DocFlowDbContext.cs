@@ -1,9 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocFlow.Documents;
+using DocFlow.Quotas;
+using DocFlow.Tenants;
+using DocFlow.Webhooks;
+using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -24,6 +29,11 @@ public class DocFlowDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+
+    public DbSet<Document> Documents { get; set; }
+    public DbSet<TenantQuota> TenantQuotas { get; set; }
+    public DbSet<TenantBillingStatus> TenantBillingStatuses { get; set; }
+    public DbSet<WebhookEvent> WebhookEvents { get; set; }
 
     #region Entities from the modules
 
@@ -76,11 +86,44 @@ public class DocFlowDbContext :
 
         /* Configure your own tables/entities inside here */
 
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(DocFlowConsts.DbTablePrefix + "YourEntities", DocFlowConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        builder.Entity<Document>(b =>
+        {
+            b.ToTable(DocFlowConsts.DbTablePrefix + "Documents", DocFlowConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.FileName).IsRequired().HasMaxLength(512);
+            b.Property(x => x.FilePath).IsRequired().HasMaxLength(2048);
+            b.Property(x => x.ContentType).IsRequired().HasMaxLength(256);
+            b.Property(x => x.Classification).HasMaxLength(256);
+            b.Property(x => x.RoutingDestination).HasMaxLength(512);
+            b.HasIndex(x => x.Status);
+            b.HasIndex(x => new { x.TenantId, x.Status });
+        });
+
+        builder.Entity<TenantQuota>(b =>
+        {
+            b.ToTable(DocFlowConsts.DbTablePrefix + "TenantQuotas", DocFlowConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.HasIndex(x => x.TenantId).IsUnique();
+        });
+
+        builder.Entity<TenantBillingStatus>(b =>
+        {
+            b.ToTable(DocFlowConsts.DbTablePrefix + "TenantBillingStatuses", DocFlowConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.HasIndex(x => x.TenantId).IsUnique();
+            b.HasIndex(x => new { x.Status, x.GracePeriodEndDate });
+        });
+
+        builder.Entity<WebhookEvent>(b =>
+        {
+            b.ToTable(DocFlowConsts.DbTablePrefix + "WebhookEvents", DocFlowConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.EventType).IsRequired().HasMaxLength(256);
+            b.Property(x => x.Payload).IsRequired();
+            b.Property(x => x.TargetUrl).IsRequired().HasMaxLength(2048);
+            b.Property(x => x.HmacSignature).HasMaxLength(512);
+            b.HasIndex(x => x.Status);
+            b.HasIndex(x => new { x.TenantId, x.Status });
+        });
     }
 }
