@@ -155,19 +155,19 @@
 
 **Purpose**: Create DTOs for all application services.
 
-- [ ] [T091] [P] [US1] Create UploadDocumentDto with file validation (src/DocFlow.Application.Contracts/Documents/Dtos/UploadDocumentDto.cs)
-- [ ] [T092] [P] [US1] Create DocumentDto with Status, Tags, LastError (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentDto.cs)
-- [ ] [T093] [P] [US2] Create DocumentListDto for list views (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentListDto.cs)
-- [ ] [T094] [P] [US4] Create DocumentSearchDto with filtering parameters (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentSearchDto.cs)
-- [ ] [T095] [P] [US5] Create ClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/ClassificationRuleDto.cs)
-- [ ] [T096] [P] [US5] Create CreateClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/CreateClassificationRuleDto.cs)
-- [ ] [T097] [P] [US5] Create UpdateClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/UpdateClassificationRuleDto.cs)
-- [ ] [T098] [P] [US6] Create DryRunResultDto with matched rules (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/DryRunResultDto.cs)
-- [ ] [T099] [P] [US9] Create RoutingQueueDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/RoutingQueueDto.cs)
-- [ ] [T100] [P] [US9] Create CreateRoutingQueueDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/CreateRoutingQueueDto.cs)
-- [ ] [T101] [P] [US10] Create AddManualTagDto (src/DocFlow.Application.Contracts/Documents/Dtos/AddManualTagDto.cs)
-- [ ] [T102] [P] [US11] Create WebhookDeliveryDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/WebhookDeliveryDto.cs)
-- [ ] [T103] [P] [US12] Create ClassificationHistoryDto (src/DocFlow.Application.Contracts/Documents/Dtos/ClassificationHistoryDto.cs)
+- [x] [T091] [P] [US1] Create UploadDocumentDto with file validation (src/DocFlow.Application.Contracts/Documents/Dtos/UploadDocumentDto.cs)
+- [x] [T092] [P] [US1] Create DocumentDto with Status, Tags, LastError (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentDto.cs)
+- [x] [T093] [P] [US2] Create DocumentListDto for list views (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentListDto.cs)
+- [x] [T094] [P] [US4] Create DocumentSearchDto with filtering parameters (src/DocFlow.Application.Contracts/Documents/Dtos/DocumentSearchDto.cs)
+- [x] [T095] [P] [US5] Create ClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/ClassificationRuleDto.cs)
+- [x] [T096] [P] [US5] Create CreateClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/CreateClassificationRuleDto.cs)
+- [x] [T097] [P] [US5] Create UpdateClassificationRuleDto (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/UpdateClassificationRuleDto.cs)
+- [x] [T098] [P] [US6] Create DryRunResultDto with matched rules (src/DocFlow.Application.Contracts/ClassificationRules/Dtos/DryRunResultDto.cs)
+- [x] [T099] [P] [US9] Create RoutingQueueDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/RoutingQueueDto.cs)
+- [x] [T100] [P] [US9] Create CreateRoutingQueueDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/CreateRoutingQueueDto.cs)
+- [x] [T101] [P] [US10] Create AddManualTagDto (src/DocFlow.Application.Contracts/Documents/Dtos/AddManualTagDto.cs)
+- [x] [T102] [P] [US11] Create WebhookDeliveryDto (src/DocFlow.Application.Contracts/RoutingQueues/Dtos/WebhookDeliveryDto.cs)
+- [x] [T103] [P] [US12] Create ClassificationHistoryDto (src/DocFlow.Application.Contracts/Documents/Dtos/ClassificationHistoryDto.cs)
 
 ---
 
