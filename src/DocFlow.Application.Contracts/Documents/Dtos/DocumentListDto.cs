@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DocFlow.Enums;
 using Volo.Abp.Application.Dtos;
 
@@ -13,6 +14,7 @@ public sealed class DocumentListDto : EntityDto<Guid>
     public long FileSizeBytes { get; set; }
     public DocumentStatus Status { get; set; }
     public int TagCount { get; set; }
+    public List<string> Tags { get; set; } = new();
     public string? Inbox { get; set; }
     public DateTime CreationTime { get; set; }
 }

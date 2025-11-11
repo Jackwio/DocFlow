@@ -44,7 +44,8 @@ public class DocumentsController : AbpControllerBase
         var uploadInput = new UploadDocumentDto
         {
             FileName = input.FileName,
-            Description = input.Description
+            Description = input.Description,
+            Inbox = input.Inbox
         };
 
         await using var stream = file.OpenReadStream();
@@ -189,5 +190,44 @@ public class DocumentsController : AbpControllerBase
     {
         // Returns full document including classification history
         return await _documentService.GetDocumentAsync(id);
+    }
+
+    /// <summary>
+    /// View a document file inline in the browser.
+    /// </summary>
+    /// <param name="id">Document ID</param>
+    /// <returns>File content for viewing</returns>
+    [HttpGet]
+    [Route("{id}/view")]
+    public async Task<IActionResult> ViewAsync(Guid id)
+    {
+        var (stream, fileName, contentType) = await _documentService.GetDocumentFileAsync(id);
+        return File(stream, contentType, fileName, enableRangeProcessing: true);
+    }
+
+    /// <summary>
+    /// Download a document file.
+    /// </summary>
+    /// <param name="id">Document ID</param>
+    /// <returns>File content for download</returns>
+    [HttpGet]
+    [Route("{id}/download")]
+    public async Task<IActionResult> DownloadAsync(Guid id)
+    {
+        var (stream, fileName, contentType) = await _documentService.GetDocumentFileAsync(id);
+        return File(stream, contentType, fileName, enableRangeProcessing: true);
+    }
+
+    /// <summary>
+    /// Update the inbox (category) of a document.
+    /// </summary>
+    /// <param name="id">Document ID</param>
+    /// <param name="inboxName">New inbox name (null to clear)</param>
+    /// <returns>Updated document details</returns>
+    [HttpPut]
+    [Route("{id}/inbox")]
+    public async Task<DocumentDto> UpdateInboxAsync(Guid id, [FromBody] string? inboxName)
+    {
+        return await _documentService.UpdateInboxAsync(id, inboxName);
     }
 }

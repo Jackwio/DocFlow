@@ -215,4 +215,17 @@ public class DocumentApplicationService : ApplicationService
 
         return ObjectMapper.Map<Document, DocumentDto>(document);
     }
+
+    /// <summary>
+    /// Get document file content for viewing or downloading.
+    /// </summary>
+    public async Task<(Stream stream, string fileName, string contentType)> GetDocumentFileAsync(Guid id)
+    {
+        var document = await _documentRepository.GetAsync(id);
+        
+        var blobName = document.BlobReference.BlobName;
+        var stream = await _blobContainer.GetAsync(blobName);
+        
+        return (stream, document.FileName.Value, document.MimeType.Value);
+    }
 }

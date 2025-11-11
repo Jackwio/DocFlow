@@ -30,6 +30,7 @@ public class DocFlowApplicationAutoMapperProfile : Profile
             .ForMember(d => d.FileName, opt => opt.MapFrom(s => s.FileName.Value))
             .ForMember(d => d.FileSizeBytes, opt => opt.MapFrom(s => s.FileSize.Bytes))
             .ForMember(d => d.TagCount, opt => opt.MapFrom(s => s.Tags.Count))
+            .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags.Select(t => t.Name.Value).ToList()))
             .ForMember(d => d.Inbox, opt => opt.MapFrom(s => s.Inbox != null ? s.Inbox.Value : null));
 
         CreateMap<ClassificationHistoryEntry, ClassificationHistoryDto>()
