@@ -30,7 +30,7 @@ public class DocFlowApplicationModule : AbpModule
             options.AddMaps<DocFlowApplicationModule>();
         });
 
-        // Register AI classification service
-        context.Services.AddTransient<IAiClassificationService, OpenAiClassificationService>();
+        // Register AI classification service (Gemini)
+        context.Services.AddTransient<IAiClassificationService, GeminiClassificationService>();
     }
 }
