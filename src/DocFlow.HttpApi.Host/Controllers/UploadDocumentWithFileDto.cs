@@ -26,4 +26,10 @@ public sealed class UploadDocumentWithFileDto
     /// Optional description for the document.
     /// </summary>
     public string? Description { get; set; }
+
+    /// <summary>
+    /// Optional inbox/category name for the document.
+    /// </summary>
+    [StringLength(100)]
+    public string? Inbox { get; set; }
 }

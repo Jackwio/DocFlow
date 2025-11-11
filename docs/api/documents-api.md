@@ -29,6 +29,7 @@
 | File | IFormFile | 是 | 要上傳的檔案 |
 | FileName | string | 否 | 自訂檔案名稱（預設為原始檔案名） |
 | Description | string | 否 | 文件描述 |
+| Inbox | string | 否 | 文件所屬的收件匣/類別 |
 
 **請求範例 (JavaScript/Fetch):**
 
@@ -37,6 +38,7 @@ const formData = new FormData();
 formData.append('File', fileInput.files[0]);
 formData.append('FileName', 'invoice-2024-001.pdf');
 formData.append('Description', 'Monthly invoice for January');
+formData.append('Inbox', 'Accounting');
 
 const response = await fetch('/api/documents/upload', {
   method: 'POST',
@@ -56,7 +58,8 @@ curl -X POST "https://api.docflow.com/api/documents/upload" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -F "File=@/path/to/file.pdf" \
   -F "FileName=invoice-2024-001.pdf" \
-  -F "Description=Monthly invoice for January"
+  -F "Description=Monthly invoice for January" \
+  -F "Inbox=Accounting"
 ```
 
 **回應範例 (200 OK):**
@@ -71,6 +74,7 @@ curl -X POST "https://api.docflow.com/api/documents/upload" \
   "status": "Pending",
   "uploadedAt": "2024-11-10T10:30:00Z",
   "blobUri": "https://storage.blob.core.windows.net/documents/3fa85f64...",
+  "inbox": "Accounting",
   "classificationResults": [],
   "tags": [],
   "routingHistory": []
@@ -181,6 +185,7 @@ const document = await response.json();
   "uploadedAt": "2024-11-10T10:30:00Z",
   "classifiedAt": "2024-11-10T10:30:15Z",
   "blobUri": "https://storage.blob.core.windows.net/documents/3fa85f64...",
+  "inbox": "Accounting",
   "classificationResults": [
     {
       "ruleId": "rule-001",
@@ -268,6 +273,8 @@ curl -X GET "https://api.docflow.com/api/documents?status=Classified&skipCount=0
       "status": "Classified",
       "uploadedAt": "2024-11-10T10:30:00Z",
       "classifiedAt": "2024-11-10T10:30:15Z",
+      "inbox": "Accounting",
+      "tagCount": 2,
       "tags": ["Invoice", "Accounting"]
     },
     {
@@ -277,6 +284,8 @@ curl -X GET "https://api.docflow.com/api/documents?status=Classified&skipCount=0
       "status": "Classified",
       "uploadedAt": "2024-11-10T11:00:00Z",
       "classifiedAt": "2024-11-10T11:00:20Z",
+      "inbox": "Legal",
+      "tagCount": 2,
       "tags": ["Contract", "Legal"]
     }
   ]
@@ -327,6 +336,7 @@ curl -X POST "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c96
   "fileName": "invoice-2024-001.pdf",
   "status": "Pending",
   "uploadedAt": "2024-11-10T10:30:00Z",
+  "inbox": "Accounting",
   "classificationResults": []
 }
 ```
@@ -410,6 +420,8 @@ curl -X POST "https://api.docflow.com/api/documents/search" \
       "fileSize": 1048576,
       "status": "Classified",
       "uploadedAt": "2024-11-10T10:30:00Z",
+      "inbox": "Accounting",
+      "tagCount": 2,
       "tags": ["Invoice", "Accounting"]
     }
   ]
@@ -473,6 +485,7 @@ curl -X POST "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c96
   "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "fileName": "invoice-2024-001.pdf",
   "status": "Classified",
+  "inbox": "Accounting",
   "tags": [
     {
       "name": "Invoice",
@@ -571,6 +584,7 @@ curl -X GET "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c963
   "fileName": "invoice-2024-001.pdf",
   "status": "Routed",
   "uploadedAt": "2024-11-10T10:30:00Z",
+  "inbox": "Accounting",
   "classificationResults": [
     {
       "ruleId": "rule-001",
@@ -619,6 +633,145 @@ curl -X GET "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c963
 
 ---
 
+### 10. 檢視文件
+
+**功能:** 在瀏覽器中檢視文件內容
+
+**端點:** `GET /api/documents/{id}/view`
+
+**請求參數:**
+
+| 參數 | 位置 | 類型 | 必填 | 說明 |
+|------|------|------|------|------|
+| id | Path | Guid | 是 | 文件 ID |
+
+**請求範例:**
+
+```javascript
+const response = await fetch('/api/documents/3fa85f64-5717-4562-b3fc-2c963f66afa6/view', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+});
+
+// 取得檔案內容
+const blob = await response.blob();
+const url = URL.createObjectURL(blob);
+window.open(url, '_blank');
+```
+
+**請求範例 (cURL):**
+
+```bash
+curl -X GET "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c963f66afa6/view" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  --output document.pdf
+```
+
+**回應:** 檔案二進位內容（Content-Type 根據文件類型設定）
+
+---
+
+### 11. 下載文件
+
+**功能:** 下載文件檔案
+
+**端點:** `GET /api/documents/{id}/download`
+
+**請求參數:**
+
+| 參數 | 位置 | 類型 | 必填 | 說明 |
+|------|------|------|------|------|
+| id | Path | Guid | 是 | 文件 ID |
+
+**請求範例:**
+
+```javascript
+const response = await fetch('/api/documents/3fa85f64-5717-4562-b3fc-2c963f66afa6/download', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+});
+
+// 下載檔案
+const blob = await response.blob();
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'invoice-2024-001.pdf';
+a.click();
+```
+
+**請求範例 (cURL):**
+
+```bash
+curl -X GET "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c963f66afa6/download" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  --output invoice-2024-001.pdf
+```
+
+**回應:** 檔案二進位內容（Content-Type 根據文件類型設定，Content-Disposition 設為 attachment）
+
+---
+
+### 12. 更新文件收件匣
+
+**功能:** 更新文件所屬的收件匣/類別
+
+**端點:** `PUT /api/documents/{id}/inbox`
+
+**Content-Type:** `application/json`
+
+**請求參數:**
+
+| 參數 | 位置 | 類型 | 必填 | 說明 |
+|------|------|------|------|------|
+| id | Path | Guid | 是 | 文件 ID |
+| inboxName | Body | string | 否 | 新的收件匣名稱（null 則清除） |
+
+**請求範例:**
+
+```javascript
+const response = await fetch('/api/documents/3fa85f64-5717-4562-b3fc-2c963f66afa6/inbox', {
+  method: 'PUT',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify('Legal')
+});
+
+const document = await response.json();
+```
+
+**請求範例 (cURL):**
+
+```bash
+curl -X PUT "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c963f66afa6/inbox" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '"Legal"'
+```
+
+**回應範例 (200 OK):**
+
+```json
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "fileName": "invoice-2024-001.pdf",
+  "fileSize": 1048576,
+  "mimeType": "application/pdf",
+  "status": "Classified",
+  "uploadedAt": "2024-11-10T10:30:00Z",
+  "inbox": "Legal",
+  "tags": ["Invoice", "Accounting"]
+}
+```
+
+---
+
 ## 資料模型定義
 
 ### DocumentDto
@@ -634,6 +787,7 @@ curl -X GET "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c963
   uploadedAt: string;                   // 上傳時間 (ISO 8601)
   classifiedAt?: string;                // 分類完成時間
   blobUri: string;                      // Blob 儲存位置
+  inbox?: string;                       // 收件匣/類別
   classificationResults: ClassificationResultDto[];
   tags: TagDto[];
   routingHistory: RoutingHistoryDto[];
@@ -650,7 +804,9 @@ curl -X GET "https://api.docflow.com/api/documents/3fa85f64-5717-4562-b3fc-2c963
   status: DocumentStatus;
   uploadedAt: string;
   classifiedAt?: string;
-  tags: string[];                       // 簡化版標籤列表
+  inbox?: string;                       // 收件匣/類別
+  tagCount: number;                     // 標籤數量
+  tags: string[];                       // 標籤列表
 }
 ```
 
@@ -1010,6 +1166,7 @@ export interface UploadDocumentWithFileDto {
 export interface UploadDocumentDto {
   fileName?: string;
   description?: string;
+  inbox?: string;
 }
 
 export interface AddManualTagDto {
@@ -1040,6 +1197,7 @@ export interface DocumentDto {
   uploadedAt: string;
   classifiedAt?: string;
   blobUri: string;
+  inbox?: string;
   classificationResults: ClassificationResultDto[];
   tags: TagDto[];
   routingHistory: RoutingHistoryDto[];
@@ -1052,6 +1210,8 @@ export interface DocumentListDto {
   status: DocumentStatus;
   uploadedAt: string;
   classifiedAt?: string;
+  inbox?: string;
+  tagCount: number;
   tags: string[];
 }
 
@@ -1103,11 +1263,12 @@ export enum TagSource {
 export class DocumentsApiClient {
   constructor(private baseUrl: string, private getToken: () => string) {}
 
-  async uploadDocument(file: File, fileName?: string, description?: string): Promise<DocumentDto> {
+  async uploadDocument(file: File, fileName?: string, description?: string, inbox?: string): Promise<DocumentDto> {
     const formData = new FormData();
     formData.append('File', file);
     if (fileName) formData.append('FileName', fileName);
     if (description) formData.append('Description', description);
+    if (inbox) formData.append('Inbox', inbox);
 
     const response = await fetch(`${this.baseUrl}/api/documents/upload`, {
       method: 'POST',
@@ -1232,6 +1393,44 @@ export class DocumentsApiClient {
         'Authorization': `Bearer ${this.getToken()}`,
         'Content-Type': 'application/json'
       }
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    return response.json();
+  }
+
+  async viewDocument(id: string): Promise<Blob> {
+    const response = await fetch(`${this.baseUrl}/api/documents/${id}/view`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this.getToken()}`
+      }
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    return response.blob();
+  }
+
+  async downloadDocument(id: string): Promise<Blob> {
+    const response = await fetch(`${this.baseUrl}/api/documents/${id}/download`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this.getToken()}`
+      }
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    return response.blob();
+  }
+
+  async updateInbox(id: string, inboxName: string | null): Promise<DocumentDto> {
+    const response = await fetch(`${this.baseUrl}/api/documents/${id}/inbox`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${this.getToken()}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inboxName)
     });
 
     if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
