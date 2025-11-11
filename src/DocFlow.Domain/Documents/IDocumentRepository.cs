@@ -40,4 +40,33 @@ public interface IDocumentRepository : IRepository<Document, Guid>
         int maxResults = 100,
         int skipCount = 0,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets the count of documents uploaded within a specific time period.
+    /// </summary>
+    /// <param name="after">Start date/time</param>
+    /// <param name="before">End date/time (optional)</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    Task<int> GetUploadCountAsync(
+        DateTime after,
+        DateTime? before = null,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets the total storage size used by all documents.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    Task<long> GetTotalStorageUsedAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Gets documents uploaded within a specific time period, ordered by upload time descending.
+    /// </summary>
+    /// <param name="after">Start date/time</param>
+    /// <param name="maxResults">Maximum number of results</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    Task<List<Document>> GetRecentUploadsAsync(
+        DateTime after,
+        int maxResults = 50,
+        CancellationToken cancellationToken = default);
 }

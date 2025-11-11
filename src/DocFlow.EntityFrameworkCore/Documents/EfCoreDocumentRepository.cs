@@ -82,4 +82,47 @@ public sealed class EfCoreDocumentRepository : EfCoreRepository<DocFlowDbContext
             .Take(maxResults)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<int> GetUploadCountAsync(
+        DateTime after,
+        DateTime? before = null,
+        CancellationToken cancellationToken = default)
+    {
+        var dbContext = await GetDbContextAsync();
+        var query = dbContext.Documents
+            .Where(d => d.CreationTime >= after);
+
+        if (before.HasValue)
+        {
+            query = query.Where(d => d.CreationTime <= before.Value);
+        }
+
+        return await query.CountAsync(cancellationToken);
+    }
+
+    public async Task<long> GetTotalStorageUsedAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var dbContext = await GetDbContextAsync();
+        
+        // Sum up all file sizes
+        var totalBytes = await dbContext.Documents
+            .SumAsync(d => EF.Property<long>(d.FileSize, "Bytes"), cancellationToken);
+
+        return totalBytes;
+    }
+
+    public async Task<List<Document>> GetRecentUploadsAsync(
+        DateTime after,
+        int maxResults = 50,
+        CancellationToken cancellationToken = default)
+    {
+        var dbContext = await GetDbContextAsync();
+        
+        return await dbContext.Documents
+            .Where(d => d.CreationTime >= after)
+            .OrderByDescending(d => d.CreationTime)
+            .Take(maxResults)
+            .ToListAsync(cancellationToken);
+    }
 }

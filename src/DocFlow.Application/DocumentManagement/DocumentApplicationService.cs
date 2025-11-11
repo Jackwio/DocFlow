@@ -18,7 +18,7 @@ namespace DocFlow.DocumentManagement;
 /// Implements US1 (Upload), US2 (Status Tracking), US3 (Failed Retry), US4 (Search & Filter).
 /// </summary>
 [Authorize]
-public class DocumentApplicationService : ApplicationService
+public class DocumentApplicationService : ApplicationService, IDocumentApplicationService
 {
     private readonly IDocumentRepository _documentRepository;
     private readonly IBlobContainer<DocFlowBlobContainer> _blobContainer;
@@ -197,5 +197,56 @@ public class DocumentApplicationService : ApplicationService
         document.RemoveManualTag(tag);
 
         await _documentRepository.UpdateAsync(document, autoSave: true);
+    }
+
+    /// <summary>
+    /// Gets upload statistics for the current user.
+    /// </summary>
+    public async Task<UploadStatisticsDto> GetUploadStatisticsAsync()
+    {
+        var now = DateTime.UtcNow;
+        var startOfToday = now.Date;
+        var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek); // Start of current week (Sunday)
+
+        // Get counts for different time periods
+        var filesToday = await _documentRepository.GetUploadCountAsync(startOfToday);
+        var filesThisWeek = await _documentRepository.GetUploadCountAsync(startOfWeek);
+        
+        // Get total count using GetListAsync and Count
+        var allDocuments = await _documentRepository.GetListAsync();
+        var filesTotal = allDocuments.Count;
+        
+        // Get total storage used
+        var storageUsedBytes = await _documentRepository.GetTotalStorageUsedAsync();
+
+        return new UploadStatisticsDto
+        {
+            FilesToday = filesToday,
+            FilesThisWeek = filesThisWeek,
+            FilesTotal = (int)filesTotal,
+            StorageUsedBytes = storageUsedBytes,
+            StorageQuotaBytes = DocFlowConsts.DefaultStorageQuotaBytes
+        };
+    }
+
+    /// <summary>
+    /// Gets recently uploaded documents (within last 24 hours).
+    /// </summary>
+    public async Task<List<RecentUploadDto>> GetRecentUploadsAsync(int maxResults = 50)
+    {
+        var twentyFourHoursAgo = DateTime.UtcNow.AddHours(-24);
+        
+        var documents = await _documentRepository.GetRecentUploadsAsync(
+            twentyFourHoursAgo,
+            maxResults);
+
+        return documents.Select(d => new RecentUploadDto
+        {
+            Id = d.Id,
+            FileName = d.FileName.Value,
+            FileSizeBytes = d.FileSize.Bytes,
+            UploadedAt = d.CreationTime,
+            IsProcessed = d.Status != DocumentStatus.Pending
+        }).ToList();
     }
 }
