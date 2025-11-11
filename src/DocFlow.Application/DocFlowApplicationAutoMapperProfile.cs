@@ -23,12 +23,14 @@ public class DocFlowApplicationAutoMapperProfile : Profile
             .ForMember(d => d.FileSizeBytes, opt => opt.MapFrom(s => s.FileSize.Bytes))
             .ForMember(d => d.MimeType, opt => opt.MapFrom(s => s.MimeType.Value))
             .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags.Select(t => t.Name.Value).ToList()))
-            .ForMember(d => d.LastError, opt => opt.MapFrom(s => s.LastError != null ? s.LastError.Value : null));
+            .ForMember(d => d.LastError, opt => opt.MapFrom(s => s.LastError != null ? s.LastError.Value : null))
+            .ForMember(d => d.Inbox, opt => opt.MapFrom(s => s.Inbox != null ? s.Inbox.Value : null));
 
         CreateMap<Document, DocumentListDto>()
             .ForMember(d => d.FileName, opt => opt.MapFrom(s => s.FileName.Value))
             .ForMember(d => d.FileSizeBytes, opt => opt.MapFrom(s => s.FileSize.Bytes))
-            .ForMember(d => d.TagCount, opt => opt.MapFrom(s => s.Tags.Count));
+            .ForMember(d => d.TagCount, opt => opt.MapFrom(s => s.Tags.Count))
+            .ForMember(d => d.Inbox, opt => opt.MapFrom(s => s.Inbox != null ? s.Inbox.Value : null));
 
         CreateMap<ClassificationHistoryEntry, ClassificationHistoryDto>()
             .ForMember(d => d.TagName, opt => opt.MapFrom(s => s.TagName.Value))

@@ -13,5 +13,6 @@ public sealed class DocumentListDto : EntityDto<Guid>
     public long FileSizeBytes { get; set; }
     public DocumentStatus Status { get; set; }
     public int TagCount { get; set; }
+    public string? Inbox { get; set; }
     public DateTime CreationTime { get; set; }
 }

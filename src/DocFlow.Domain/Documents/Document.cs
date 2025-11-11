@@ -27,6 +27,7 @@ public sealed class Document : FullAuditedAggregateRoot<Guid>, IMultiTenant
     public DocumentStatus Status { get; private set; }
     public ErrorMessage? LastError { get; private set; }
     public Guid? RoutedToQueueId { get; private set; }
+    public InboxName? Inbox { get; private set; }
 
     public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
     public IReadOnlyCollection<ClassificationHistoryEntry> ClassificationHistory => _classificationHistory.AsReadOnly();
@@ -46,7 +47,8 @@ public sealed class Document : FullAuditedAggregateRoot<Guid>, IMultiTenant
         FileName fileName,
         FileSize fileSize,
         MimeType mimeType,
-        BlobReference blobReference)
+        BlobReference blobReference,
+        InboxName? inbox)
     {
         Id = id;
         TenantId = tenantId;
@@ -54,6 +56,7 @@ public sealed class Document : FullAuditedAggregateRoot<Guid>, IMultiTenant
         FileSize = fileSize ?? throw new ArgumentNullException(nameof(fileSize));
         MimeType = mimeType ?? throw new ArgumentNullException(nameof(mimeType));
         BlobReference = blobReference ?? throw new ArgumentNullException(nameof(blobReference));
+        Inbox = inbox;
         Status = DocumentStatus.Pending;
     }
 
@@ -66,9 +69,10 @@ public sealed class Document : FullAuditedAggregateRoot<Guid>, IMultiTenant
         FileName fileName,
         FileSize fileSize,
         MimeType mimeType,
-        BlobReference blobReference)
+        BlobReference blobReference,
+        InboxName? inbox = null)
     {
-        var document = new Document(id, tenantId, fileName, fileSize, mimeType, blobReference);
+        var document = new Document(id, tenantId, fileName, fileSize, mimeType, blobReference, inbox);
         
         document.AddLocalEvent(new DocumentUploadedEvent(
             id,
@@ -183,6 +187,14 @@ public sealed class Document : FullAuditedAggregateRoot<Guid>, IMultiTenant
         _tags.Remove(tagToRemove);
 
         AddLocalEvent(new ManualTagRemovedEvent(Id, tagName));
+    }
+
+    /// <summary>
+    /// Updates the inbox (category) of the document.
+    /// </summary>
+    public void UpdateInbox(InboxName? inbox)
+    {
+        Inbox = inbox;
     }
 
     private bool AlreadyHasTag(TagName tagName)

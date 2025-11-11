@@ -64,6 +64,7 @@ public class DocumentApplicationService : ApplicationService
         var fileName = FileName.Create(fileNameStr);
         var fileSize = FileSize.Create(fileLength);
         var mimeType = MimeType.Create(mimeTypeLower);
+        var inbox = !string.IsNullOrWhiteSpace(input.Inbox) ? InboxName.Create(input.Inbox) : null;
 
         // Generate unique blob name with tenant-specific path
         // Format: {tenantId}/{guid}.{extension} or host/{guid}.{extension} for null tenant
@@ -84,7 +85,8 @@ public class DocumentApplicationService : ApplicationService
             fileName,
             fileSize,
             mimeType,
-            blobReference);
+            blobReference,
+            inbox);
 
         // Save to repository
         await _documentRepository.InsertAsync(document, autoSave: true);
@@ -197,5 +199,20 @@ public class DocumentApplicationService : ApplicationService
         document.RemoveManualTag(tag);
 
         await _documentRepository.UpdateAsync(document, autoSave: true);
+    }
+
+    /// <summary>
+    /// Update the inbox (category) of a document.
+    /// </summary>
+    public async Task<DocumentDto> UpdateInboxAsync(Guid id, string? inboxName)
+    {
+        var document = await _documentRepository.GetAsync(id);
+        var inbox = !string.IsNullOrWhiteSpace(inboxName) ? InboxName.Create(inboxName) : null;
+
+        document.UpdateInbox(inbox);
+
+        await _documentRepository.UpdateAsync(document, autoSave: true);
+
+        return ObjectMapper.Map<Document, DocumentDto>(document);
     }
 }

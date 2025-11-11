@@ -36,6 +36,10 @@ public sealed class DocumentConfiguration : IEntityTypeConfiguration<Document>
             .HasConversion(new ErrorMessageConverter())
             .HasMaxLength(1000);
 
+        builder.Property(d => d.Inbox)
+            .HasConversion(new InboxNameConverter())
+            .HasMaxLength(100);
+
         // BlobReference as owned entity
         builder.OwnsOne(d => d.BlobReference, br =>
         {
