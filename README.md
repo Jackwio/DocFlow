@@ -58,6 +58,20 @@ This is a layered monolith application that consists of the following applicatio
 
 Deploying an ABP application is not different than deploying any .NET or ASP.NET Core application. However, there are some topics that you should care about when you are deploying your applications. You can check ABP's [Deployment documentation](https://abp.io/docs/latest/deployment) before deploying your application.
 
+### Code Quality and Standards
+
+This project follows strict code quality standards, testing practices, and architectural guidelines. Please review our comprehensive documentation:
+
+* **[Code Quality and Standards Documentation](docs/CODE_QUALITY_AND_STANDARDS.md)** - Complete guide for development standards
+* **[程式碼品質與標準文件 (繁體中文)](docs/CODE_QUALITY_AND_STANDARDS_zh-TW.md)** - 完整開發標準指南
+
+Key highlights:
+- **Architecture**: Clean Architecture with DDD principles
+- **Testing**: Unit tests (xUnit + FakeItEasy) and Integration tests (Testcontainers)
+- **Code Style**: C# coding conventions with Object Calisthenics for domain code
+- **Commits**: Conventional Commits format
+- **Performance**: Defined response time targets and optimization guidelines
+
 ### Additional resources
 
 You can see the following resources to learn more about your solution and the ABP Framework:
